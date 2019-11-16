@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 3.5)
 project(byte CXX)
 set(CMAKE_CXX_STANDARD 11)
 
-# Show detailed make command that runs
+### Show detailed make command that runs
 # set(CMAKE_VERBOSE_MAKEFILE ON)
 
-# Print stuff
+### Print stuff
 # include(CMakePrintHelpers)
 # cmake_print_variables(MY_VARIABLE)
 # cmake_print_properties(
@@ -14,11 +14,14 @@ set(CMAKE_CXX_STANDARD 11)
 #   PROPERTIES POSITION_INDEPENDENT_CODE
 # )
 
-# Nice debug command
+### Nice debug command
 # cmake -S . -B build --trace-source=CMakeLists.txt --trace-expand -Wno-dev
 
 # Switch debug or release build
 # -DCMAKE_BUILD_TYPE=Debug
+
+### Test
+# using ctest command to test all
 
 list(APPEND CMAKE_MODULE_PATH
   ${CMAKE_CURRENT_LIST_DIR}/CMake
