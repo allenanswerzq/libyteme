@@ -2,12 +2,12 @@
 using namespace std;
 
 template <class T>
-struct combina_large_t {
+struct CombinaLarge {
 // NOTE: T must suports number inverse opertion
   vector<T> fact;
   vector<T> fact_inv;
 
-  explicit combina_large_t(int n) {
+  explicit CombinaLarge(int n) {
     fact.resize(n + 1);
     fact_inv.resize(n + 1);
     fact[0] = 1;
@@ -41,12 +41,12 @@ struct combina_large_t {
   }
 };
 
-struct combina_t {
+struct Combina {
 // Compute cominatrics for a relative small range up to 10^3
   vector<vector<int>> dp;
 
   // c(n, k) = c(n - 1, k) + c(n - 1, k - 1);
-  explicit combina_t(int n) {
+  explicit Combina(int n) {
     dp.resize(n + 1, vector<int>(n + 1));
     for (int i = 0; i <= n; i++) {
       dp[i][0] = 1;

@@ -3,7 +3,7 @@ using namespace std;
 
 // Taken from https://codeforces.com/contest/1151/submission/52973403
 template <int mod_>
-struct modnum_t {
+struct Modnum {
   static constexpr int mod = mod_;
   static_assert(mod_ > 0, "mod must be positive");
 
@@ -18,9 +18,9 @@ struct modnum_t {
   }
 
  public:
-  modnum_t() : v(0) {}
+  Modnum() : v(0) {}
 
-  modnum_t(ll v_) : v(int(v_ % mod)) {
+  Modnum(ll v_) : v(int(v_ % mod)) {
     if (v < 0) {
       v += mod;
     }
@@ -28,78 +28,78 @@ struct modnum_t {
 
   explicit operator int() const { return v; }
 
-  friend std::ostream& operator << (std::ostream& out, const modnum_t& n) {
+  friend std::ostream& operator << (std::ostream& out, const Modnum& n) {
     return out << int(n);
   }
 
-  friend std::istream& operator >> (std::istream& in, modnum_t& n) {
+  friend std::istream& operator >> (std::istream& in, Modnum& n) {
     ll x; in >> x;
-    n = modnum_t(x);
+    n = Modnum(x);
     return in;
   }
 
-  friend bool operator == (const modnum_t& a, const modnum_t& b) { return a.v == b.v; }
-  friend bool operator != (const modnum_t& a, const modnum_t& b) { return a.v != b.v; }
+  friend bool operator == (const Modnum& a, const Modnum& b) { return a.v == b.v; }
+  friend bool operator != (const Modnum& a, const Modnum& b) { return a.v != b.v; }
 
-  modnum_t inv() const {
-    modnum_t res;
+  Modnum inv() const {
+    Modnum res;
     res.v = inv(v, mod);
     return res;
   }
 
-  modnum_t neg() const {
-    modnum_t res;
+  Modnum neg() const {
+    Modnum res;
     res.v = v ? mod - v : 0;
     return res;
   }
 
-  modnum_t operator- () const {
+  Modnum operator- () const {
     return neg();
   }
 
-  modnum_t operator+ () const {
-    return modnum_t(*this);
+  Modnum operator+ () const {
+    return Modnum(*this);
   }
 
-  modnum_t& operator ++ () {
+  Modnum& operator ++ () {
     v++;
     if (v == mod) v = 0;
     return *this;
   }
 
-  modnum_t& operator -- () {
+  Modnum& operator -- () {
     if (v == 0) v = mod;
     v--;
     return *this;
   }
 
-  modnum_t& operator += (const modnum_t& o) {
+  Modnum& operator += (const Modnum& o) {
     v += o.v;
     if (v >= mod) v -= mod;
     return *this;
   }
 
-  modnum_t& operator -= (const modnum_t& o) {
+  Modnum& operator -= (const Modnum& o) {
     v -= o.v;
     if (v < 0) v += mod;
     return *this;
   }
 
-  modnum_t& operator *= (const modnum_t& o) {
+  Modnum& operator *= (const Modnum& o) {
     v = int(ll(v) * ll(o.v) % mod);
     return *this;
   }
 
-  modnum_t& operator /= (const modnum_t& o) {
+  Modnum& operator /= (const Modnum& o) {
     return *this *= o.inv();
   }
 
-  friend modnum_t operator ++ (modnum_t& a, int) { modnum_t r = a; ++a; return r; }
-  friend modnum_t operator -- (modnum_t& a, int) { modnum_t r = a; --a; return r; }
-  friend modnum_t operator + (const modnum_t& a, const modnum_t& b) { return modnum_t(a) += b; }
-  friend modnum_t operator - (const modnum_t& a, const modnum_t& b) { return modnum_t(a) -= b; }
-  friend modnum_t operator * (const modnum_t& a, const modnum_t& b) { return modnum_t(a) *= b; }
-  friend modnum_t operator / (const modnum_t& a, const modnum_t& b) { return modnum_t(a) /= b; }
+  friend Modnum operator ++ (Modnum& a, int) { Modnum r = a; ++a; return r; }
+  friend Modnum operator -- (Modnum& a, int) { Modnum r = a; --a; return r; }
+  friend Modnum operator + (const Modnum& a, const Modnum& b) { return Modnum(a) += b; }
+  friend Modnum operator - (const Modnum& a, const Modnum& b) { return Modnum(a) -= b; }
+  friend Modnum operator * (const Modnum& a, const Modnum& b) { return Modnum(a) *= b; }
+  friend Modnum operator / (const Modnum& a, const Modnum& b) { return Modnum(a) /= b; }
 };
 
 namespace {

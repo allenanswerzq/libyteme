@@ -5,7 +5,7 @@ namespace {
 
 TEST(BitTest, Query) {
   vector<int> v = {1, 2, 3, 4, 5};
-  bit_t<int> bit(v);
+  Bit<int> bit(v);
   int sum = 0;
   for (int i = 0; i < 5; i++) {
     sum += v[i];
@@ -15,7 +15,7 @@ TEST(BitTest, Query) {
 
 TEST(BitTest, QueryInterval) {
   vector<int> v = {1, 2, 3, 4, 5};
-  bit_t<int> bit(v);
+  Bit<int> bit(v);
   int sum = 0;
   for (int i = 0; i < 5; i++) {
     sum += v[i];
@@ -29,7 +29,7 @@ TEST(BitTest, QueryInterval) {
 
 TEST(BitTest, QueryAdd) {
   vector<int> v = {1, 2, 3, 4, 5};
-  bit_t<int> bit(5);
+  Bit<int> bit(5);
   for (int i = 0; i < 5; i++) {
     bit.add(i, v[i]);
   }

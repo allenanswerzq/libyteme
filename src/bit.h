@@ -2,16 +2,16 @@
 using namespace std;
 
 template <class T>
-struct bit_t {
+struct Bit {
 // Zero index based binary index tree.
   int n;
   vector<T> bt;
 
-  bit_t(int n_) : n(n_ + 1) {
+  Bit(int n_) : n(n_ + 1) {
     bt.resize(n);
   }
 
-  bit_t(const vector<int>& v) {
+  Bit(const vector<int>& v) {
     n = v.size() + 1;
     bt.resize(n);
     for (int i = 0; i < n - 1; i++) {
