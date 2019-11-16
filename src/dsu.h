@@ -1,4 +1,7 @@
-struct dsu_t {
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Dsu {
   int n;
   int m; // the number of groups after applying join.
   int gid;
@@ -6,7 +9,7 @@ struct dsu_t {
   vector<int> root_hash;
   vector<int> gid_hash;
 
-  dsu_t(int n_) : n(n_) {
+  Dsu(int n_) : n(n_) {
     m = n;
     gid = 0;
     e.resize(n, -1);
@@ -18,8 +21,21 @@ struct dsu_t {
     return -e[find(x)];
   }
 
-  int find(int x) {
+  int find_rec(int x) {
     return e[x] < 0 ? x : e[x] = find(e[x]);
+  }
+
+  int find(int u) {
+    int root = u;
+    while (e[root] >= 0) {
+      root = e[root];
+    }
+    while (u != root) {
+      int t = e[u];
+      e[u] = root;
+      u = t;
+    }
+    return root;
   }
 
   bool join(int a, int b) {
@@ -57,7 +73,7 @@ struct dsu_t {
 
   vector<vector<int>> groups() {
     vector<vector<int>> ret(m);
-    // Note: 0-based.
+    // Note: zero index based.
     for (int i = 0; i < n; i++) {
       int root = find(i);
       ret[get_gid(root)].push_back(i);

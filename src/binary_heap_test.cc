@@ -1,6 +1,8 @@
 #include "binary_heap.h"
 #include "gtest/gtest.h"
 
+namespace {
+
 TEST(BinaryHeap, Insert) {
   vector<int> v = {4, 3, 1, 2, 5};
   BinaryHeap<100> binary_heap;
@@ -41,3 +43,4 @@ TEST(DeathTest, ExceedHeap) {
   EXPECT_EQ(binary_heap.hs, 0);
 }
 
+}  // namespace

@@ -61,3 +61,24 @@ byte_cc_test(NAME
     byte::binary_heap
     gmock_main
 )
+
+byte_cc_library(
+  NAME
+    dsu
+  SRCS
+    "dsu.h"
+  COPTS
+    ${BYTE_DEFAULT_COPTS}
+  PUBLIC
+)
+
+byte_cc_test(NAME
+    dsu_test
+  SRCS
+    "dsu_test.cc"
+  COPTS
+    ${BYTE_TEST_COPTS}
+  DEPS
+    byte::binary_heap
+    gmock_main
+)
