@@ -29,11 +29,10 @@ TEST_F(BuildDsu, Group) {
   EXPECT_EQ(dsu->m, 2);
   sort(g[0].begin(), g[0].end());
   sort(g[1].begin(), g[1].end());
-  EXPECT_EQ(g[0][0], 0);
-  EXPECT_EQ(g[0][1], 1);
-  EXPECT_EQ(g[0][2], 2);
-  EXPECT_EQ(g[1][0], 3);
-  EXPECT_EQ(g[1][1], 4);
+  vector<int> v0 = {0, 1, 2};
+  vector<int> v1 = {3, 4};
+  EXPECT_EQ(g[0], v0);
+  EXPECT_EQ(g[1], v1);
   EXPECT_EQ(dsu->get_groot(0), 0);
   EXPECT_EQ(dsu->get_groot(1), 3);
   EXPECT_EQ(dsu->get_gid(3), 1);

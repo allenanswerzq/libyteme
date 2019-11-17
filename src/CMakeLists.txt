@@ -9,7 +9,8 @@ byte_cc_library(
   PUBLIC
 )
 
-byte_cc_test(NAME
+byte_cc_test(
+  NAME
     bit_test
   SRCS
     "bit_test.cc"
@@ -30,7 +31,8 @@ byte_cc_library(
   PUBLIC
 )
 
-byte_cc_test(NAME
+byte_cc_test(
+  NAME
     combina_test
   SRCS
     "combina_test.cc"
@@ -51,7 +53,8 @@ byte_cc_library(
   PUBLIC
 )
 
-byte_cc_test(NAME
+byte_cc_test(
+  NAME
     binary_heap_test
   SRCS
     "binary_heap_test.cc"
@@ -72,7 +75,8 @@ byte_cc_library(
   PUBLIC
 )
 
-byte_cc_test(NAME
+byte_cc_test(
+  NAME
     dsu_test
   SRCS
     "dsu_test.cc"
@@ -80,5 +84,27 @@ byte_cc_test(NAME
     ${BYTE_TEST_COPTS}
   DEPS
     byte::binary_heap
+    gmock_main
+)
+
+byte_cc_library(
+  NAME
+    ordered_set
+  SRCS
+    "ordered_set.h"
+  COPTS
+    ${BYTE_DEFAULT_COPTS}
+  PUBLIC
+)
+
+byte_cc_test(
+  NAME
+    ordered_set_test
+  SRCS
+    "ordered_set_test.cc"
+  COPTS
+    ${BYTE_TEST_COPTS}
+  DEPS
+    byte::ordered_set
     gmock_main
 )
