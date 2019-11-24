@@ -7,6 +7,8 @@ struct Modnum {
   static constexpr int mod = mod_;
   static_assert(mod_ > 0, "mod must be positive");
 
+  typedef Modnum MD;
+
  private:
   using ll = long long;
   int v;
@@ -28,78 +30,78 @@ struct Modnum {
 
   explicit operator int() const { return v; }
 
-  friend std::ostream& operator << (std::ostream& out, const Modnum& n) {
+  friend std::ostream& operator << (std::ostream& out, const MD& n) {
     return out << int(n);
   }
 
-  friend std::istream& operator >> (std::istream& in, Modnum& n) {
+  friend std::istream& operator >> (std::istream& in, MD& n) {
     ll x; in >> x;
-    n = Modnum(x);
+    n = MD(x);
     return in;
   }
 
-  friend bool operator == (const Modnum& a, const Modnum& b) { return a.v == b.v; }
-  friend bool operator != (const Modnum& a, const Modnum& b) { return a.v != b.v; }
+  friend bool operator == (const MD& a, const MD& b) { return a.v == b.v; }
+  friend bool operator != (const MD& a, const MD& b) { return a.v != b.v; }
 
-  Modnum inv() const {
-    Modnum res;
+  MD inv() const {
+    MD res;
     res.v = inv(v, mod);
     return res;
   }
 
-  Modnum neg() const {
-    Modnum res;
+  MD neg() const {
+    MD res;
     res.v = v ? mod - v : 0;
     return res;
   }
 
-  Modnum operator- () const {
+  MD operator- () const {
     return neg();
   }
 
-  Modnum operator+ () const {
-    return Modnum(*this);
+  MD operator+ () const {
+    return MD(*this);
   }
 
-  Modnum& operator ++ () {
+  MD& operator ++ () {
     v++;
     if (v == mod) v = 0;
     return *this;
   }
 
-  Modnum& operator -- () {
+  MD& operator -- () {
     if (v == 0) v = mod;
     v--;
     return *this;
   }
 
-  Modnum& operator += (const Modnum& o) {
+  MD& operator += (const MD& o) {
     v += o.v;
     if (v >= mod) v -= mod;
     return *this;
   }
 
-  Modnum& operator -= (const Modnum& o) {
+  MD& operator -= (const MD& o) {
     v -= o.v;
     if (v < 0) v += mod;
     return *this;
   }
 
-  Modnum& operator *= (const Modnum& o) {
+  MD& operator *= (const MD& o) {
     v = int(ll(v) * ll(o.v) % mod);
     return *this;
   }
 
-  Modnum& operator /= (const Modnum& o) {
+  MD& operator /= (const MD& o) {
     return *this *= o.inv();
   }
 
-  friend Modnum operator ++ (Modnum& a, int) { Modnum r = a; ++a; return r; }
-  friend Modnum operator -- (Modnum& a, int) { Modnum r = a; --a; return r; }
-  friend Modnum operator + (const Modnum& a, const Modnum& b) { return Modnum(a) += b; }
-  friend Modnum operator - (const Modnum& a, const Modnum& b) { return Modnum(a) -= b; }
-  friend Modnum operator * (const Modnum& a, const Modnum& b) { return Modnum(a) *= b; }
-  friend Modnum operator / (const Modnum& a, const Modnum& b) { return Modnum(a) /= b; }
+  friend MD operator ++ (MD& a, int) { MD r = a; ++a; return r; }
+  friend MD operator -- (MD& a, int) { MD r = a; --a; return r; }
+  friend MD operator + (const MD& a, const MD& b) { return MD(a) += b; }
+  friend MD operator - (const MD& a, const MD& b) { return MD(a) -= b; }
+  friend MD operator * (const MD& a, const MD& b) { return MD(a) *= b; }
+  friend MD operator / (const MD& a, const MD& b) { return MD(a) /= b; }
 };
 
 namespace {

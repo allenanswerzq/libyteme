@@ -3,7 +3,7 @@ using namespace std;
 
 template <class T>
 struct CombinaLarge {
-// NOTE: T must suports number inverse opertion
+// NOTE: T must supports number inverse opertion
   vector<T> fact;
   vector<T> fact_inv;
 

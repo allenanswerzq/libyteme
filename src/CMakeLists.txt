@@ -108,3 +108,25 @@ byte_cc_test(
     byte::ordered_set
     gmock_main
 )
+
+byte_cc_library(
+  NAME
+    graph.h
+  SRCS
+    "graph.h"
+  COPTS
+    ${BYTE_DEFAULT_COPTS}
+  PUBLIC
+)
+
+byte_cc_test(
+  NAME
+    graph_test.h
+  SRCS
+    "graph_test.cc"
+  COPTS
+    ${BYTE_TEST_COPTS}
+  DEPS
+    byte::ordered_set
+    gmock_main
+)
