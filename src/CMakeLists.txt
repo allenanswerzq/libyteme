@@ -111,7 +111,7 @@ byte_cc_test(
 
 byte_cc_library(
   NAME
-    graph.h
+    graph
   SRCS
     "graph.h"
   COPTS
@@ -121,12 +121,34 @@ byte_cc_library(
 
 byte_cc_test(
   NAME
-    graph_test.h
+    graph_test
   SRCS
     "graph_test.cc"
   COPTS
     ${BYTE_TEST_COPTS}
   DEPS
-    byte::ordered_set
+    byte::graph
+    gmock_main
+)
+
+byte_cc_library(
+  NAME
+    segtree
+  SRCS
+    "segtree.h"
+  COPTS
+    ${BYTE_DEFAULT_COPTS}
+  PUBLIC
+)
+
+byte_cc_test(
+  NAME
+    segtree_test
+  SRCS
+    "segtree_test.cc"
+  COPTS
+    ${BYTE_TEST_COPTS}
+  DEPS
+    byte::segtree
     gmock_main
 )

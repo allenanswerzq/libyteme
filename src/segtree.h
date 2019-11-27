@@ -1,5 +1,8 @@
+#include <bits/stdc++.h>
+using namespace std;
+
 // Zero-indexed segment tree
-class segtree {
+class Segtree {
 public:
   struct node {
     int add = 0;
@@ -76,22 +79,22 @@ public:
     return res;
   }
 
-  template <typename... M>
-  void modify(int x, int l, int r, int lx, int rx, const M&... v) {
+  template <typename M>
+  void modify(int x, int l, int r, int lx, int rx, const M& v) {
     if (rx <= l || r <= lx) {
       return;
     }
     if (lx <= l && r <= rx) {
-      tree[x].apply(l, r, v...);
+      tree[x].apply(l, r, v);
       return;
     }
     int y = l + (r - l) / 2;
     push(x, l, r);
     if (lx < y) {
-      modify(x << 1, l, y, lx, rx, v...);
+      modify(x << 1, l, y, lx, rx, v);
     }
     if (rx > y) {
-      modify(x << 1 | 1, y, r, lx, rx, v...);
+      modify(x << 1 | 1, y, r, lx, rx, v);
     }
     pull(x);
   }
@@ -104,14 +107,14 @@ public:
     return t;
   }
 
-  segtree(int n_) : n(n_) {
+  Segtree(int n_) : n(n_) {
     n = get_size(n);
     tree.resize(2 * n);
     build(1, 0, n);
   }
 
   template <typename M>
-  segtree(const vector<M>& v) {
+  Segtree(const vector<M>& v) {
     n = get_size((int) v.size());
     tree.resize(2 * n);
     vector<M> t = v;
@@ -129,10 +132,10 @@ public:
     return get(1, 0, n, p, p + 1);
   }
 
-  template <typename... M>
-  void modify(int lx, int rx, const M&... v) {
+  template <typename M>
+  void modify(int lx, int rx, const M& v) {
     assert(0 <= lx && lx <= rx && rx <= n);
-    modify(1, 0, n, lx, rx, v...);
+    modify(1, 0, n, lx, rx, v);
   }
 };
 
