@@ -1,8 +1,44 @@
 
 byte_cc_library(
   NAME
-    bit
+    logging
+  HDRS
+    "logging.h"
   SRCS
+    "logging.cc"
+  COPTS
+    ${BYTE_DEFAULT_COPTS}
+  PUBLIC
+)
+
+byte_cc_library(
+  NAME
+    benchmark
+  HDRS
+    "benchmark.h"
+  SRCS
+    "benchmark.cc"
+  COPTS
+    ${BYTE_DEFAULT_COPTS}
+  DEPS
+    byte::logging
+  PUBLIC
+)
+
+byte_cc_library(
+  NAME
+    random
+  HDRS
+    "random.h"
+  COPTS
+    ${BYTE_DEFAULT_COPTS}
+  PUBLIC
+)
+
+byte_cc_library(
+  NAME
+    bit
+  HDRS
     "bit.h"
   COPTS
     ${BYTE_DEFAULT_COPTS}
@@ -24,7 +60,7 @@ byte_cc_test(
 byte_cc_library(
   NAME
     combina
-  SRCS
+  HDRS
     "combina.h"
   COPTS
     ${BYTE_DEFAULT_COPTS}
@@ -46,7 +82,7 @@ byte_cc_test(
 byte_cc_library(
   NAME
     binary_heap
-  SRCS
+  HDRS
     "binary_heap.h"
   COPTS
     ${BYTE_DEFAULT_COPTS}
@@ -68,7 +104,7 @@ byte_cc_test(
 byte_cc_library(
   NAME
     dsu
-  SRCS
+  HDRS
     "dsu.h"
   COPTS
     ${BYTE_DEFAULT_COPTS}
@@ -90,7 +126,7 @@ byte_cc_test(
 byte_cc_library(
   NAME
     ordered_set
-  SRCS
+  HDRS
     "ordered_set.h"
   COPTS
     ${BYTE_DEFAULT_COPTS}
@@ -112,7 +148,7 @@ byte_cc_test(
 byte_cc_library(
   NAME
     graph
-  SRCS
+  HDRS
     "graph.h"
   COPTS
     ${BYTE_DEFAULT_COPTS}
@@ -134,7 +170,7 @@ byte_cc_test(
 byte_cc_library(
   NAME
     segtree
-  SRCS
+  HDRS
     "segtree.h"
   COPTS
     ${BYTE_DEFAULT_COPTS}
@@ -151,4 +187,21 @@ byte_cc_test(
   DEPS
     byte::segtree
     gmock_main
+    byte::random
+    byte::benchmark
 )
+
+byte_cc_test(
+  NAME
+    run_benchmark
+  COPTS
+    ${BYTE_DEFAULT_COPTS}
+  SRCS
+    "segtree_test.cc"
+    "run_benchmark.cc"
+  DEPS
+  byte::segtree
+  byte::benchmark
+  gmock_main
+)
+
