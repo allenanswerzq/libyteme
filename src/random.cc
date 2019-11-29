@@ -13,13 +13,30 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef BYTEME_RANDOM_H_
-#define BYTEME_RANDOM_H_
+#include "random.h"
+#include <random>
 
-#include "types.h"
+static std::mt19937_64* InitRng() {
+  std::random_device device("/dev/urandom");
+  return new std::mt19937_64(device());
+}
 
-uint64 New64();
-uint32 New32();
+uint64 New64() {
+  static std::mt19937_64* rng = InitRng();
+  // static mutex mu;
+  // mutex_lock l(mu);
+  return (*rng)();
+}
 
-#endif  // BYTEME_RANDOM_H_
+static std::mt19937* InitRng32() {
+  std::random_device device("/dev/urandom");
+  return new std::mt19937(device());
+}
+
+uint32 New32() {
+  static std::mt19937* rng = InitRng32();
+  // static mutex mu;
+  // mutex_lock l(mu);
+  return (*rng)();
+}
 
