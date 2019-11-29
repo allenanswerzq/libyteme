@@ -1,4 +1,4 @@
-#include "src/dsu.h"
+#include "dsu.h"
 #include "gmock/gmock.h"
 
 namespace {
