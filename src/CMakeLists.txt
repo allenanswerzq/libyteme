@@ -186,11 +186,12 @@ byte_cc_test(
     ${BYTE_TEST_COPTS}
   DEPS
     byte::segtree
-    gmock_main
     byte::random
     byte::benchmark
+    gmock_main
 )
 
+# Run all benchmarks
 byte_cc_test(
   NAME
     run_benchmark
@@ -200,8 +201,8 @@ byte_cc_test(
     "segtree_test.cc"
     "run_benchmark.cc"
   DEPS
-  byte::segtree
-  byte::benchmark
-  gmock_main
+    byte::segtree
+    byte::benchmark
+    gmock_main
 )
 

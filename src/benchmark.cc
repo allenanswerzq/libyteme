@@ -148,8 +148,10 @@ void Benchmark::Run(const char* pattern) {
     }
   }
 
-  printf("%-*s %10s %10s\n", width, "Benchmark", "Time(ns)", "Iterations");
-  printf("%s\n", string(width + 22, '-').c_str());
+  printf("%-*s %10s %10s %10s\n", width,
+         "Benchmark", "Time(us)", "Total(ms)", "Iterations");
+  printf("%s\n", string(width + 34, '-').c_str());
+
   for (auto b : *all_benchmarks) {
     name = b->name_;
     for (auto arg : b->args_) {
@@ -181,8 +183,10 @@ void Benchmark::Run(const char* pattern) {
                  (items_processed * 1e-6) / seconds);
         full_label += buf;
       }
-      printf("%-*s %10.0f %10d\t%s\n", width, name.c_str(),
-             seconds * 1e9 / iters, iters, full_label.c_str());
+
+      // Print the runing time of each iter for a operation.
+      printf("%-*s %10.0f %10.2f %10d\t%s\n", width, name.c_str(),
+             seconds * 1e6 / iters, seconds * 1e3, iters, full_label.c_str());
     }
   }
 }
@@ -195,7 +199,7 @@ void Benchmark::Register() {
 void Benchmark::Run(int arg1, int arg2, int* run_count, double* run_seconds) {
   static const int64 kMinIters = 100;
   static const int64 kMaxIters = 1000000000;
-  static const double kMinTime = 0.5;
+  static const double kMinTime = 1.0;
   int64 iters = kMinIters;
   while (true) {
     accum_time = 0;

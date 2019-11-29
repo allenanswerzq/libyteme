@@ -1,9 +1,19 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// A Dsu class implements a common disjoint union set data structure.
+//
+// Note: After applying join operation, the whole data will be
+// splited into different set groups, this class also supports:
+// * get the number of set groups `m` after join, each group
+//   will have a `gid` starting at 0
+// * for a specific set group, we can get the root via get_groot call
+// * also for a root, we can get the group id `gid` to which it belongs
+//
+
 struct Dsu {
   int n;
-  int m; // the number of groups after applying join.
+  int m;
   int gid;
   vector<int> e;
   vector<int> root_hash;
