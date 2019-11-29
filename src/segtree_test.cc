@@ -17,22 +17,23 @@ TEST(Segtree, Sum) {
 TEST(Segtree, Vector) {
   const int kMax = 1e9 + 7;
   const int n = 1e5;
-  vector<int> v(n);
+  vector<uint64> v(n);
   for (int i = 0; i < n; i++) {
-    v[i] = New64() % kMax;
+    v[i] = New32() % kMax;
   }
-  vector<int64> pr(n + 1);
+  vector<uint64> pr(n + 1);
   for (int i = 0; i < n; i++) {
     pr[i + 1] = pr[i] + v[i];
   }
   Segtree sg(v);
   for (int i = 0; i < 10000; i++) {
-    int lo = New64() % n;
-    int hi = New64() % n;
+    int lo = New32() % n;
+    int hi = New32() % n;
     if (lo > hi) {
       swap(lo, hi);
     }
-    EXPECT_EQ(sg.get(lo, hi).sum, pr[hi + 1] - pr[lo]);
+    // [lo, hi)
+    EXPECT_EQ(sg.get(lo, hi).sum, pr[hi] - pr[lo]);
   }
 }
 
@@ -40,9 +41,9 @@ static void BM_SegtreeSum(int iter, int arg) {
   int n = arg;
   Segtree sg(n);
   for (int i = 0; i < iter; i++) {
-    int lo = New64() % n;
-    int hi = New64() % n;
-    int val = New64() % n;
+    int lo = New32() % n;
+    int hi = New32() % n;
+    int val = New32() % n;
     if (lo > hi) {
       swap(lo, hi);
     }
@@ -54,9 +55,9 @@ BENCHMARK(BM_SegtreeSum)->Range(10000, 1000000);
 
 static void BM_SegtreeVector(int iter, int arg) {
   for (int it = 0; it < iter; it++) {
-    vector<int64> v(arg);
+    vector<uint64> v(arg);
     for (int i = 0; i < arg; i++) {
-      v[i] = New64();
+      v[i] = New32();
     }
     Segtree sg(v);
   }

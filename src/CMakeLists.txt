@@ -3,6 +3,7 @@ byte_cc_library(
   NAME
     logging
   HDRS
+    "types.h"
     "logging.h"
   SRCS
     "logging.cc"
@@ -29,7 +30,10 @@ byte_cc_library(
   NAME
     random
   HDRS
+    "types.h"
     "random.h"
+  SRCS
+    "random.cc"
   COPTS
     ${BYTE_DEFAULT_COPTS}
   PUBLIC
@@ -191,6 +195,30 @@ byte_cc_test(
     gmock_main
 )
 
+byte_cc_library(
+  NAME
+    ring_queue
+  HDRS
+    "ring_queue.h"
+  COPTS
+    ${BYTE_DEFAULT_COPTS}
+  PUBLIC
+)
+
+byte_cc_test(
+  NAME
+    ring_queue_test
+  SRCS
+    "ring_queue_test.cc"
+  COPTS
+    ${BYTE_TEST_COPTS}
+  DEPS
+    byte::ring_queue
+    byte::random
+    byte::benchmark
+    gmock_main
+)
+
 # Run all benchmarks
 byte_cc_test(
   NAME
@@ -198,10 +226,13 @@ byte_cc_test(
   COPTS
     ${BYTE_DEFAULT_COPTS}
   SRCS
+    "ring_queue_test.cc"
     "segtree_test.cc"
     "run_benchmark.cc"
   DEPS
+    byte::ring_queue
     byte::segtree
+    byte::random
     byte::benchmark
     gmock_main
 )
