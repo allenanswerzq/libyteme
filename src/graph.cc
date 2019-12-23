@@ -1,5 +1,8 @@
+#include <bits/stdc++.h>
+using namespace std;
+
 template <typename T>
-class graph {
+class Graph {
   public:
   struct edge {
     int from;
@@ -13,7 +16,7 @@ class graph {
 
   function<bool(int)> ignore;
 
-  graph(int _n) : n(_n) {
+  Graph(int _n) : n(_n) {
     g.resize(n);
     ignore = nullptr;
   }
@@ -30,13 +33,13 @@ class graph {
 };
 
 template <typename T>
-class forest : public graph<T> {
+class forest : public Graph<T> {
   public:
-  using graph<T>::edges;
-  using graph<T>::g;
-  using graph<T>::n;
+  using Graph<T>::edges;
+  using Graph<T>::g;
+  using Graph<T>::n;
 
-  forest(int _n) : graph<T>(_n) {
+  forest(int _n) : Graph<T>(_n) {
   }
 
   int add(int from, int to, T cost = 1) {
@@ -329,158 +332,6 @@ class hld_forest : public lca_forest<T> {
       }
     }
     return true;
-  }
-};
-
-template <class T>
-struct edge {
-  int to;
-  T cost;
-  friend ostream& operator<<(ostream& os, const edge& e) {
-    os << "(" << e.to << ", " << e.cost << ")";
-    return os;
-  }
-};
-
-template <class T>
-class graph {
- public:
-  // Adjcent list representation of a graph
-  vector<vector<edge<T>>> g;
-  int n;
-
-  graph(int n_) : n(n_) {
-    g.resize(n);
-  }
-
-  void add_direct(int from, int to) {
-    g[from].push_back(edge{to, 0});
-  }
-
-  void add_direct(int from, int to, const T& cost) {
-    g[from].push_back(edge{to, cost});
-  }
-
-  void add_undirect(int from, int to, const T& cost) {
-    add_direct(from, to, cost);
-    add_direct(to, from, cost);
-  }
-
-  graph& operator[](int u) {
-    return g[u];
-  }
-};
-
-// single source shortest path
-// o(e * logv)
-template <class T>
-vector<T> dijkstra(int src) {
-  vector<T> dist(n, INF);
-  typedef pair<T, int> PII;
-  priority_queue<PII, vector<PII>, greater<PII>> q;
-  dist[src] = 0;
-  q.push({0, src});
-  while (!q.empty()) {
-    auto tp = q.top();
-    q.pop();
-    T d = tp.first;
-    int u = tp.second;
-    if (d > dist[u]) {
-    // Very important line of code here
-      continue;
-    }
-    for (edge e : g[tp.second]) {
-      if (dist[u] + e.cost < dist[e.to]) {
-        dist[e.to] = dist[u] + e.cost;
-        q.push(PII{dist[e.to], e.to});
-      }
-    }
-  }
-  return dist;
-
-// O(v * e)
-vector<int> bellman_ford(const graph& g, int src, bool* negative_cycle) {
-  int n = g.n;
-  vector<int> dist(n, INF);
-  dist[src] = 0;
-  for (int i = 0; i < n - 1; i++) {
-    for (int u = 0; u < n; u++) {
-      for (edge e : g[u]) {
-        dist[e.to] = min(dist[e.to], dist[u] + e.cost);
-      }
-    }
-  }
-  for (int u = 0; u < n; u++) {
-    for (edge e : g[u]) {
-      if (dist[u] + e.cost < dist[e.to]) {
-        negative_cycle = true;
-      }
-    }
-  }
-  return negative_cycle ? vector<int>{} : dist;
-}
-
-// all pairs shortest path
-// o(v ^ 3)
-vector<vector<int>> floyd_warshall(const graph& g) {
-  int n = g.n;
-  vector<vector<int>> dist(n, vector<int>(n));
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-      if (i == j) {
-        dist[i][j] = 0;
-      }
-      else {
-        dist[i][j] = INF;
-      }
-    }
-  }
-  for (int u = 0; u < n; u++) {
-    for (edge e : g[u]) {
-      dist[u][e.to] = e.cost;
-    }
-  }
-  for (int k = 0; k < n; k++) {
-    for (int i = 0; i < n; i++) {
-      for (int j = 0; j < n; j++) {
-        dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
-      }
-    }
-  }
-  return dist;
-}
-
-// Forward star representation of a graph
-class graph {
- public:
-  struct edge_t {
-    int to;
-    int next;
-    int w;
-  };
-
-  const int N = 1e5;
-  edge_t edge[N];
-  int cnt;
-  int g[N];
-
-  graph() {
-    cnt = 0;
-    memset(g, -1, sizeof(g));
-  }
-
-  void add_edge(int u, int v, int w = 0) {
-    edge[cnt].to
-    edge[cnt].w = w;
-    edge[cnt].next = g[u];
-    g[u] = cnt++;
-  }
-
-  void travse(int s) {
-    for (int u = g[s]; u != -1; u = edge[u].next) {
-      int v = edge[u].to;
-      // u --> v
-    }
   }
 };
 
