@@ -76,15 +76,4 @@ template <typename T>
 vector<int> suffix_array(const T &s, int char_bound) {
   return suffix_array((int) s.size(), s, char_bound);
 }
-} // namespace suffix_array_t
-
-void test() {
-  // TODO(zq7):
-}
-
-int main() {
-  ios_base::sync_with_stdio(0);
-  cin.tie(0);
-  test();
-  return 0;
-}
+}  // namespace suffix_array_t

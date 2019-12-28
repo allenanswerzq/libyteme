@@ -70,7 +70,7 @@ vector<vector<T>> floyd_warshall(const Graph<T, E>& ga) {
   }
   for (int u = 0; u < n; u++) {
     for (auto e : ga.edges(u)) {
-      dist[u][e.to] = e.cost;
+      dist[u][e->to] = e.cost;
     }
   }
   for (int k = 0; k < n; k++) {

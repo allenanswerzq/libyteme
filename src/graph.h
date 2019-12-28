@@ -1,146 +1,104 @@
-#include <bits/stdc++.h>
-using namespace std;
+#include "base.h"
 
-template <class T, class E>
-struct Graph {
+struct NodeBase {
+  // A Node should at least has an id.
+  int id;
+  // Each node may also have other properties,
+  // but here only use id to initialize one Node object.
+  NodeBase(int id_) : id(id_) {}
+};
+
+template <class N, class T>
+struct EdgeBase {
+  // An Edge should at least have two nodes.
+  N* from;
+  N* to;
+  T cost;
+  EdgeBase(N* from_, N* to_, T cost_ = 1)
+    : from(from_), to(to_), cost(cost_) {}
+};
+
+template <class N, template <class X, class Y> class E, class T>
+struct GraphBase {
   // The number of nodes in a graph.
   int n;
 
   // The number of edges in a graph.
   int m;
 
+  // All the nodes in a graph.
+  vector<N*> nodes;
+
+  // All the edges in a graph.
+  vector< E<N, T>* > edges;
+
+  // The place where a Node is indexed.
+  vector<int> place;
+
   // Add an edge into the graph.
   virtual void add(int from, int to, T cost = 1) = 0;
 
   // Get all edges for a node u.
-  virtual vector<E*> edges(int u) = 0;
+  virtual vector< E<N, T>* > get_edges(int u) = 0;
+
+  // Get or create a new Node
+  virtual N* get_or_create(int id) = 0;
 };
 
-// Adjacent list representation of a graph.
-template <class T>
-struct EdgeAdj {
-  int to;
-  T cost;
-};
-
-template <class T>
-struct GraphAdj : public Graph<T, EdgeAdj<T>> {
-  vector<vector<EdgeAdj<T>*>> g;
+template <class N, template <class X, class Y> class E, class T>
+struct GraphAdj : public GraphBase<N, E, T> {
+  vector< vector< E<N, T>* >> g;
 
   GraphAdj(int n_)  {
     this->n = n_;
     this->m = 0;
+    this->place.resize(n_, -1);
+    this->nodes.clear();
+    this->edges.clear();
     g.resize(this->n);
   }
 
   ~GraphAdj() {
-    for (int u = 0; u < this->n; u++) {
-      for (auto e : g[u]) {
-        assert(e);
-        delete e;
+    for (int i = 0; i < this->n; i++) {
+      if (this->nodes[i]) {
+        delete this->nodes[i];
+      }
+    }
+    for (int i = 0; i < this->m; i++) {
+      if (this->edges[i]) {
+        delete this->edges[i];
       }
     }
   }
 
-  vector<EdgeAdj<T>*> edges(int u) override {
-    vector<EdgeAdj<T>*> ret;
-    for (auto e : g[u]) {
-      ret.push_back(e);
+  vector< E<N, T>* > get_edges(int u) override {
+    assert(0 <= u && u < this->n);
+    return g[u];
+  }
+
+  N* get_or_create(int id) override {
+    assert(0 <= id && id < this->n);
+    if (this->place[id] != -1) {
+      return this->nodes[this->place[id]];
     }
-    return ret;
+    N* node = new N(id);
+    this->nodes.push_back(node);
+    this->place[id] = int(this->nodes.size()) - 1;
+    return node;
   }
 
   void add(int u, int v, T cost = 1) override {
+    N* from = get_or_create(u);
+    N* to = get_or_create(v);
+    E<N, T>* e = new E<N, T> (from, to, cost);
+    this->edges.push_back(e);
     this->m++;
-    g[u].push_back(new EdgeAdj<T>{v, cost});
+    g[u].push_back(e);
   }
-};
-
-
-// Forward star representation of a graph.
-template <class T>
-struct EdgeStar {
-  int to;
-  int next;
-  T cost;
-};
-
-// M denotes the maximum number of edges this graph might have.
-template <class T, int M>
-struct GraphStar : public Graph<T, EdgeStar<T>> {
-  vector<EdgeStar<T>*> g;
-  vector<int> cnt;
-  const int kDefault = -1;
-
-  GraphStar() {
-    this->m = 0;
-    g.resize(M);
-    cnt.resize(M, -1);
-  }
-
-  ~GraphStar() {
-    for (int i = 0; i < this->m; i++) {
-      assert(g[i]);
-      delete g[i];
-    }
-  }
-
-  vector<EdgeStar<T>*> edges(int u) override {
-    vector<EdgeStar<T>*> ret;
-    for (int x = cnt[u]; x != -1; x = g[x]->next) {
-      ret.push_back(g[x]);
-    }
-    return ret;
-  }
-
-  void add(int u, int v, T cost = 1) override {
-    g[this->m] = new EdgeStar<T>{kDefault, kDefault, kDefault};
-    g[this->m]->to = v;;
-    g[this->m]->cost = cost;
-    g[this->m]->next = cnt[u];
-    cnt[u] = this->m++;
-  }
-};
-
-// Left child and right brother representation of a graph.
-template <class T>
-struct EdgeChild {
-  int child;
-  int brother;
-  T cost;
 };
 
 template <class T>
-struct GraphChild : public Graph<T, EdgeChild<T>> {
-  // int n;
-  vector<EdgeChild<T>*> g;
-  const int kDefault = -1;
+using Graph = GraphAdj<NodeBase, EdgeBase, T>;
 
-  GraphChild(int n_) {
-    this->n = n_;
-    g.resize(this->n, new EdgeChild<T>{kDefault, kDefault, 1});
-  }
-
-  ~GraphChild() {
-    for (auto e : g) {
-      delete e;
-    }
-  }
-
-  vector<EdgeChild<T>*> edges(int u) override {
-    vector<EdgeChild<T>*> ret;
-    while (u != kDefault) {
-      ret.push_back(&g[u]);
-      u = g[u].child;
-    }
-    return ret;
-  }
-
-  void add(int u, int v, T cost = 1) override {
-    // u-->v
-    g[v].brother = g[u].child;
-    g[u].child = v;
-    g[u].cost = cost;
-  }
-};
-
+template <class N, class T>
+using GraphNode = GraphAdj<N, EdgeBase, T>;

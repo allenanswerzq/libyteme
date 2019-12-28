@@ -3,6 +3,7 @@ byte_cc_library(
   NAME
     logging
   HDRS
+    "types.h"
     "logging.h"
   SRCS
     "logging.cc"
@@ -29,7 +30,10 @@ byte_cc_library(
   NAME
     random
   HDRS
+    "types.h"
     "random.h"
+  SRCS
+    "random.cc"
   COPTS
     ${BYTE_DEFAULT_COPTS}
   PUBLIC
@@ -50,6 +54,28 @@ byte_cc_test(
     bit_test
   SRCS
     "bit_test.cc"
+  COPTS
+    ${BYTE_TEST_COPTS}
+  DEPS
+    byte::bit
+    gmock_main
+)
+
+byte_cc_library(
+  NAME
+    monotonic_queue.h
+  HDRS
+    "monotonic_queue.h"
+  COPTS
+    ${BYTE_DEFAULT_COPTS}
+  PUBLIC
+)
+
+byte_cc_test(
+  NAME
+    monotonic_queue_test
+  SRCS
+    "monotonic_queue_test.cc"
   COPTS
     ${BYTE_TEST_COPTS}
   DEPS
@@ -150,6 +176,7 @@ byte_cc_library(
     graph
   HDRS
     "graph.h"
+    "tarjan_scc.h"
   COPTS
     ${BYTE_DEFAULT_COPTS}
   PUBLIC
@@ -186,22 +213,50 @@ byte_cc_test(
     ${BYTE_TEST_COPTS}
   DEPS
     byte::segtree
-    gmock_main
     byte::random
     byte::benchmark
+    gmock_main
 )
 
+byte_cc_library(
+  NAME
+    ring_queue
+  HDRS
+    "ring_queue.h"
+  COPTS
+    ${BYTE_DEFAULT_COPTS}
+  PUBLIC
+)
+
+byte_cc_test(
+  NAME
+    ring_queue_test
+  SRCS
+    "ring_queue_test.cc"
+  COPTS
+    ${BYTE_TEST_COPTS}
+  DEPS
+    byte::ring_queue
+    byte::random
+    byte::benchmark
+    gmock_main
+)
+
+# Run all benchmarks
 byte_cc_test(
   NAME
     run_benchmark
   COPTS
     ${BYTE_DEFAULT_COPTS}
   SRCS
+    "ring_queue_test.cc"
     "segtree_test.cc"
     "run_benchmark.cc"
   DEPS
-  byte::segtree
-  byte::benchmark
-  gmock_main
+    byte::ring_queue
+    byte::segtree
+    byte::random
+    byte::benchmark
+    gmock_main
 )
 
