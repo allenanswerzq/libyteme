@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
+
 // Longest strictly increase sequence
 // O(n * logn)
 vector<int> lis(vector<int>& a) {

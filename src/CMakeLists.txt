@@ -63,6 +63,28 @@ byte_cc_test(
 
 byte_cc_library(
   NAME
+    monotonic_queue.h
+  HDRS
+    "monotonic_queue.h"
+  COPTS
+    ${BYTE_DEFAULT_COPTS}
+  PUBLIC
+)
+
+byte_cc_test(
+  NAME
+    monotonic_queue_test
+  SRCS
+    "monotonic_queue_test.cc"
+  COPTS
+    ${BYTE_TEST_COPTS}
+  DEPS
+    byte::bit
+    gmock_main
+)
+
+byte_cc_library(
+  NAME
     combina
   HDRS
     "combina.h"
@@ -154,6 +176,7 @@ byte_cc_library(
     graph
   HDRS
     "graph.h"
+    "tarjan_scc.h"
   COPTS
     ${BYTE_DEFAULT_COPTS}
   PUBLIC
