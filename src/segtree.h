@@ -5,8 +5,8 @@ using namespace std;
 class Segtree {
 public:
   struct node {
-    int add = 0;
-    int sum = 0;
+    long long add = 0;
+    long long sum = 0;
 
     // Each node denotes an interval [l, r).
     void apply(int l, int r, int v) {

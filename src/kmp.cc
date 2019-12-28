@@ -75,17 +75,3 @@ vector<int> z_function(string s) {
 }
 } // namespace string_func
 
-void test() {
-  string text = "abcd abcd ef abcd";
-  string pat = "abcd";
-  auto v = string_func::search(text, pat);
-  trace(pat, str, v);
-}
-
-int main() {
-  ios_base::sync_with_stdio(0);
-  cin.tie(0);
-  test();
-  return 0;
-}
-
