@@ -1,5 +1,6 @@
-#include "base.h"
 #include "monotonic_queue.h"
+
+#include "base.h"
 
 namespace {
 
@@ -10,7 +11,6 @@ TEST(Max, TestQueue) {
   vector<int> right = {1, 10, 10, 10, 8, 8, 12};
   EXPECT_EQ(ans, right);
 }
-
 
 TEST(LargestRectangle, TestStack) {
   vector<int> height = {2, 1, 5, 6, 2, 3};

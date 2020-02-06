@@ -22,4 +22,3 @@ uint64 New64();
 uint32 New32();
 
 #endif  // BYTEME_RANDOM_H_
-

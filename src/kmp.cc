@@ -29,11 +29,11 @@ struct kmp_t {
   }
 
   vector<int> search(const string& text, const string& pat) {
-  // returns 0-indexed positions of occurrences of s in w
+    // returns 0-indexed positions of occurrences of s in w
     int n = pat.size();
     int m = text.size();
     vector<int> fail = fail_table(pat);
-    assert(n >= 1 && (int) fail.size() == n);
+    assert(n >= 1 && (int)fail.size() == n);
     vector<int> res;
     int k = 0;
     for (int i = 0; i < m; i++) {
@@ -58,7 +58,7 @@ vector<int> search(const string& text, const string& pat) {
 
 // Ref: https://cp-algorithms.com/string/z-function.html
 vector<int> z_function(string s) {
-  int n = (int) s.length();
+  int n = (int)s.length();
   vector<int> z(n);
   for (int i = 1, l = 0, r = 0; i < n; ++i) {
     if (i <= r) {
@@ -73,5 +73,4 @@ vector<int> z_function(string s) {
   }
   return z;
 }
-} // namespace string_func
-
+}  // namespace string_func

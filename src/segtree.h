@@ -3,7 +3,7 @@ using namespace std;
 
 // Zero-indexed segment tree
 class Segtree {
-public:
+ public:
   struct node {
     long long add = 0;
     long long sum = 0;
@@ -35,9 +35,7 @@ public:
     }
   }
 
-  void pull(int x) {
-    tree[x] = unite(tree[x << 1], tree[x << 1 | 1]);
-  }
+  void pull(int x) { tree[x] = unite(tree[x << 1], tree[x << 1 | 1]); }
 
   int n;
   vector<node> tree;
@@ -55,7 +53,7 @@ public:
   template <typename M>
   void build(int x, int l, int r, const vector<M>& v) {
     if (l + 1 == r) {
-      assert(0 <= l && l < (int) v.size());
+      assert(0 <= l && l < (int)v.size());
       tree[x].apply(l, r, v[l]);
       return;
     }
@@ -115,7 +113,7 @@ public:
 
   template <typename M>
   Segtree(const vector<M>& v) {
-    n = get_size((int) v.size());
+    n = get_size((int)v.size());
     tree.resize(2 * n);
     vector<M> t = v;
     t.resize(n);
@@ -138,4 +136,3 @@ public:
     modify(1, 0, n, lx, rx, v);
   }
 };
-

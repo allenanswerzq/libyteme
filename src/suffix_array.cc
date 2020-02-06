@@ -22,11 +22,10 @@ vector<int> suffix_array(int n, const T &s, int char_bound) {
     for (int i = 0; i < n; i++) {
       a[aux[s[i]]++] = i;
     }
-  } else {
+  }
+  else {
     iota(a.begin(), a.end(), 0);
-    sort(a.begin(), a.end(), [&s](int i, int j) {
-      return s[i] < s[j];
-    });
+    sort(a.begin(), a.end(), [&s](int i, int j) { return s[i] < s[j]; });
   }
   vector<int> sorted_by_second(n);
   vector<int> ptr_group(n);
@@ -59,7 +58,8 @@ vector<int> suffix_array(int n, const T &s, int char_bound) {
     for (int i = 1; i < n; i++) {
       if (group[a[i]] != group[a[i - 1]]) {
         new_group[a[i]] = new_group[a[i - 1]] + 1;
-      } else {
+      }
+      else {
         int pre = (a[i - 1] + step >= n ? -1 : group[a[i - 1] + step]);
         int cur = (a[i] + step >= n ? -1 : group[a[i] + step]);
         new_group[a[i]] = new_group[a[i - 1]] + (pre != cur);
@@ -74,6 +74,6 @@ vector<int> suffix_array(int n, const T &s, int char_bound) {
 
 template <typename T>
 vector<int> suffix_array(const T &s, int char_bound) {
-  return suffix_array((int) s.size(), s, char_bound);
+  return suffix_array((int)s.size(), s, char_bound);
 }
-}  // namespace suffix_array_t
+}  // namespace suffix_aray_t

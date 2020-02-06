@@ -4,11 +4,11 @@ using namespace std;
 int dcmp(double a, double b) {
   const double eps = 1e-9;
   if (fabs(a - b) < eps) {
-  // a equals b
+    // a equals b
     return 0;
   }
   if (b + eps < a) {
-  // a greater than b
+    // a greater than b
     return 1;
   }
   // a smaller than b

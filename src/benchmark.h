@@ -18,15 +18,15 @@ limitations under the License.
 #include "logging.h"
 
 // Simple benchmarking facility.
+#include <string>
 #include <utility>
 #include <vector>
-#include <string>
 
 namespace byteme {
 
-#define BENCHMARK(n)                                            \
+#define BENCHMARK(n)                                        \
   static ::byteme::testing::Benchmark* TF_BENCHMARK_CONCAT( \
-      __benchmark_, n, __LINE__) __attribute__((unused)) =          \
+      __benchmark_, n, __LINE__) __attribute__((unused)) =  \
       (new ::byteme::testing::Benchmark(#n, (n)))
 #define TF_BENCHMARK_CONCAT(a, b, c) TF_BENCHMARK_CONCAT2(a, b, c)
 #define TF_BENCHMARK_CONCAT2(a, b, c) a##b##c
@@ -68,4 +68,4 @@ void UseRealTime();
 }  // namespace testing
 }  // namespace byteme
 
-#endif // BYTEME_BENCHMARK_H_
+#endif  // BYTEME_BENCHMARK_H_

@@ -31,13 +31,9 @@ struct Dsu {
     gid_hash.resize(n, -1);
   }
 
-  int size(int x) {
-    return -e[find(x)];
-  }
+  int size(int x) { return -e[find(x)]; }
 
-  int find_rec(int x) {
-    return e[x] < 0 ? x : e[x] = find(e[x]);
-  }
+  int find_rec(int x) { return e[x] < 0 ? x : e[x] = find(e[x]); }
 
   int find(int u) {
     int root = u;

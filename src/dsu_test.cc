@@ -1,4 +1,5 @@
 #include "dsu.h"
+
 #include "gmock/gmock.h"
 
 namespace {
@@ -40,4 +41,3 @@ TEST_F(BuildDsu, Group) {
 }
 
 }  // namespace
-

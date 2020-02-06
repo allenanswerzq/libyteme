@@ -4,7 +4,7 @@ using namespace std;
 // Longest strictly increase sequence
 // O(n * logn)
 vector<int> lis(vector<int>& a) {
-  int n = (int) a.size();
+  int n = (int)a.size();
   // The smallest value index for a sequence with length `i`
   vector<int> dp(n);
   vector<int> pr(n);
@@ -32,7 +32,7 @@ vector<int> lis(vector<int>& a) {
 
 void test(vector<int> a) {
   vector<int> r = lis(a);
-  for (int i = 0; i < (int) r.size(); ++i) {
+  for (int i = 0; i < (int)r.size(); ++i) {
     if (i > 0) {
       cout << " ";
     }

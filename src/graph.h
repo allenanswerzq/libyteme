@@ -14,8 +14,7 @@ struct EdgeBase {
   N* from;
   N* to;
   T cost;
-  EdgeBase(N* from_, N* to_, T cost_ = 1)
-    : from(from_), to(to_), cost(cost_) {}
+  EdgeBase(N* from_, N* to_, T cost_ = 1) : from(from_), to(to_), cost(cost_) {}
 };
 
 template <class N, template <class X, class Y> class E, class T>
@@ -30,16 +29,13 @@ struct GraphBase {
   vector<N*> nodes;
 
   // All the edges in a graph.
-  vector< E<N, T>* > edges;
-
-  // The place where a Node is indexed.
-  vector<int> place;
+  vector<E<N, T>*> edges;
 
   // Add an edge into the graph.
   virtual void add(int from, int to, T cost = 1) = 0;
 
   // Get all edges for a node u.
-  virtual vector< E<N, T>* > get_edges(int u) = 0;
+  virtual vector<E<N, T>*> get_edges(int u) = 0;
 
   // Get or create a new Node
   virtual N* get_or_create(int id) = 0;
@@ -47,13 +43,16 @@ struct GraphBase {
 
 template <class N, template <class X, class Y> class E, class T>
 struct GraphAdj : public GraphBase<N, E, T> {
-  vector< vector< E<N, T>* >> g;
+  vector<vector<E<N, T>*>> g;
 
-  GraphAdj(int n_)  {
+  GraphAdj() {}
+
+  GraphAdj(int n_) { resize(n_); }
+
+  void resize(int n_) {
     this->n = n_;
     this->m = 0;
-    this->place.resize(n_, -1);
-    this->nodes.clear();
+    this->nodes.resize(n_, nullptr);
     this->edges.clear();
     g.resize(this->n);
   }
@@ -71,26 +70,22 @@ struct GraphAdj : public GraphBase<N, E, T> {
     }
   }
 
-  vector< E<N, T>* > get_edges(int u) override {
+  vector<E<N, T>*> get_edges(int u) override {
     assert(0 <= u && u < this->n);
     return g[u];
   }
 
   N* get_or_create(int id) override {
-    assert(0 <= id && id < this->n);
-    if (this->place[id] != -1) {
-      return this->nodes[this->place[id]];
+    if (this->nodes[id]) {
+      return this->nodes[id];
     }
-    N* node = new N(id);
-    this->nodes.push_back(node);
-    this->place[id] = int(this->nodes.size()) - 1;
-    return node;
+    return this->nodes[id] = new N(id);
   }
 
   void add(int u, int v, T cost = 1) override {
     N* from = get_or_create(u);
     N* to = get_or_create(v);
-    E<N, T>* e = new E<N, T> (from, to, cost);
+    E<N, T>* e = new E<N, T>(from, to, cost);
     this->edges.push_back(e);
     this->m++;
     g[u].push_back(e);

@@ -3,13 +3,11 @@ using namespace std;
 
 template <class T>
 struct Bit {
-// Zero index based binary index tree.
+  // Zero index based binary index tree.
   int n;
   vector<T> bt;
 
-  Bit(int n_) : n(n_ + 1) {
-    bt.resize(n);
-  }
+  Bit(int n_) : n(n_ + 1) { bt.resize(n); }
 
   Bit(const vector<int>& v) {
     n = v.size() + 1;
@@ -27,7 +25,7 @@ struct Bit {
   }
 
   // Returns the sum from index 0 to i
-  T query(int i)  {
+  T query(int i) {
     T res = 0;
     for (++i; i > 0; i -= i & (-i)) {
       res += bt[i];

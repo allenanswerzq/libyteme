@@ -1,4 +1,5 @@
 #include "src/bit.h"
+
 #include "gtest/gtest.h"
 
 namespace {

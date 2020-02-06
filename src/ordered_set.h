@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
-#include <ext/pb_ds/tree_policy.hpp>
+
 #include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
 using namespace std;
 #define RB rb_tree_tag, tree_order_statistics_node_update
@@ -16,18 +17,18 @@ typedef long long ll;
 
 template <class X, class Y>
 struct OrderedMap : public OD_MAP {
+  using OD_MAP::begin;
+  using OD_MAP::end;
+  using OD_MAP::find;
   using OD_MAP::find_by_order;
   using OD_MAP::order_of_key;
   using OD_MAP::size;
-  using OD_MAP::find;
-  using OD_MAP::end;
-  using OD_MAP::begin;
 
   typedef std::pair<X, Y> PXY;
 
   // Returns the `ith` element in a set zero index based.
   PXY at(int index) {
-    assert(0 <= index && index < (int) size());
+    assert(0 <= index && index < (int)size());
     return *find_by_order(index);
   }
 
@@ -39,29 +40,25 @@ struct OrderedMap : public OD_MAP {
     return order_of_key(key);
   }
 
-  int count(X key) {
-    return (find(key) == end() ? 0 : 1);
-  }
+  int count(X key) { return (find(key) == end() ? 0 : 1); }
 };
 
 template <class T>
 struct OrderedSet : public OD_SET {
+  using OD_SET::begin;
+  using OD_SET::end;
+  using OD_SET::find;
   using OD_SET::find_by_order;
   using OD_SET::order_of_key;
   using OD_SET::size;
-  using OD_SET::find;
-  using OD_SET::end;
-  using OD_SET::begin;
 
   // Returns the `ith` element in a set zero index based.
   T at(int index) {
-    assert(0 <= index && index < (int) size());
+    assert(0 <= index && index < (int)size());
     return *find_by_order(index);
   }
 
-  T operator[](int index) {
-    return at(index);
-  }
+  T operator[](int index) { return at(index); }
 
   // Returns the index of a value.
   int index(T val) {
@@ -71,12 +68,10 @@ struct OrderedSet : public OD_SET {
     return order_of_key(val);
   }
 
-  int count(T x) {
-    return (find(x) == end() ? 0 : 1);
-  }
+  int count(T x) { return (find(x) == end() ? 0 : 1); }
 };
 
-template<class T>
+template <class T>
 struct OrderedMultiSet : public OD_MSET {
   using OD_MSET::find_by_order;
   using OD_MSET::insert;
@@ -89,38 +84,30 @@ struct OrderedMultiSet : public OD_MSET {
 
   int id = 0;
 
-  void insert(T x) {
-    insert({x, id++});
-  }
+  void insert(T x) { insert({x, id++}); }
 
   T at(int index) {
-    assert(0 <= index && index < (int) size());
+    assert(0 <= index && index < (int)size());
     return find_by_order(index)->first;
   }
 
   // Get the `index`th element.
   const_iterator att(int index) const {
-    assert(0 <= index && index < (int) size());
+    assert(0 <= index && index < (int)size());
     return find_by_order(index);
   }
 
   iterator att(int index) {
-    assert(0 <= index && index < (int) size());
+    assert(0 <= index && index < (int)size());
     return find_by_order(index);
   }
 
   // Get the index of a specific key `x`.
-  int index(int x) {
-    return order_of_key({x, 0});
-  }
+  int index(int x) { return order_of_key({x, 0}); }
 
-  void erase(iterator it) {
-    OD_MSET::erase(it);
-  }
+  void erase(iterator it) { OD_MSET::erase(it); }
 
-  void erase(int index) {
-    erase(att(index));
-  }
+  void erase(int index) { erase(att(index)); }
 
   // O(logc + count(x))
   void erase_all(T x) {
@@ -132,13 +119,9 @@ struct OrderedMultiSet : public OD_MSET {
     }
   }
 
-  int lower_bound(T x) {
-    return order_of_key({x, 0});
-  }
+  int lower_bound(T x) { return order_of_key({x, 0}); }
 
-  int upper_bound(T x) {
-    return order_of_key({x + 1, 0});
-  }
+  int upper_bound(T x) { return order_of_key({x + 1, 0}); }
 
   int count(T x) {
     int d = upper_bound(x) - lower_bound(x);
