@@ -9,7 +9,7 @@ struct Bit {
 
   Bit(int n_) : n(n_ + 1) { bt.resize(n); }
 
-  Bit(const vector<int>& v) {
+  Bit(const vector<T>& v) {
     n = v.size() + 1;
     bt.resize(n);
     for (int i = 0; i < n - 1; i++) {
@@ -33,7 +33,7 @@ struct Bit {
     return res;
   }
 
-  // Queries an interval for zero based indeies
+  // Queries an interval for zero based indexes
   T query(int x, int y) {
     assert(0 <= x && x < n - 1);
     assert(0 <= y && y < n - 1);

@@ -15,6 +15,7 @@ using namespace std;
 // * also for a root, we can get the group id `gid` to which it belongs
 //
 
+namespace dsu_t {
 struct Dsu {
   int n;
   int m;
@@ -91,3 +92,6 @@ struct Dsu {
     return ret;
   }
 };
+}  // namespace dsu_t
+
+using namespace dsu_t;
