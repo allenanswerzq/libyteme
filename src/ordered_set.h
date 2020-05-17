@@ -3,55 +3,24 @@
 #include <ext/pb_ds/assoc_container.hpp>
 using namespace __gnu_pbds;
 using namespace std;
-#define RB rb_tree_tag, tree_order_statistics_node_update
-#define OD_MAP tree<X, Y, less<int>, RB>
-#define OD_SET tree<T, null_type, less<int>, RB>
-#define OD_MSET tree<pair<T, int>, null_type, less<pair<T, int>>, RB>
 #define x first
 #define y second
-#ifndef LOCAL
-#define trace(...)
-#endif
+#define all(x) (x).begin(), (x).end()
 typedef long long ll;
 
-template <class X, class Y>
-struct OrderedMap : public OD_MAP {
-  using OD_MAP::find_by_order;
-  using OD_MAP::order_of_key;
-  using OD_MAP::size;
-  using OD_MAP::find;
-  using OD_MAP::end;
-  using OD_MAP::begin;
-
-  typedef std::pair<X, Y> PXY;
-
-  // Returns the `ith` element in a set zero index based.
-  PXY at(int index) {
-    assert(0 <= index && index < (int) size());
-    return *find_by_order(index);
-  }
-
-  // Returns the index of a value.
-  int index(X key) {
-    if (find(key) == end()) {
-      return -1;
-    }
-    return order_of_key(key);
-  }
-
-  int count(X key) {
-    return (find(key) == end() ? 0 : 1);
-  }
-};
+#define TreeSet tree<                \
+  T, null_type, less<int>,           \
+  rb_tree_tag,                       \
+  tree_order_statistics_node_update>
 
 template <class T>
-struct OrderedSet : public OD_SET {
-  using OD_SET::find_by_order;
-  using OD_SET::order_of_key;
-  using OD_SET::size;
-  using OD_SET::find;
-  using OD_SET::end;
-  using OD_SET::begin;
+struct OrderedSet : public TreeSet {
+  using TreeSet::find_by_order;
+  using TreeSet::order_of_key;
+  using TreeSet::size;
+  using TreeSet::find;
+  using TreeSet::end;
+  using TreeSet::begin;
 
   // Returns the `ith` element in a set zero index based.
   T at(int index) {
@@ -76,16 +45,56 @@ struct OrderedSet : public OD_SET {
   }
 };
 
-template<class T>
-struct OrderedMultiSet : public OD_MSET {
-  using OD_MSET::find_by_order;
-  using OD_MSET::insert;
-  using OD_MSET::lower_bound;
-  using OD_MSET::order_of_key;
-  using OD_MSET::size;
+#define TreeMap tree<                \
+  X, Y, less<int>,                   \
+  rb_tree_tag,                       \
+  tree_order_statistics_node_update>
 
-  typedef typename OD_MSET::iterator iterator;
-  typedef typename OD_MSET::const_iterator const_iterator;
+template <class X, class Y>
+struct OrderedMap : public TreeMap {
+  using TreeMap::find_by_order;
+  using TreeMap::order_of_key;
+  using TreeMap::size;
+  using TreeMap::find;
+  using TreeMap::end;
+  using TreeMap::begin;
+
+  typedef std::pair<X, Y> PXY;
+
+  // Returns the `ith` element in a set zero index based.
+  PXY at(int index) {
+    assert(0 <= index && index < (int) size());
+    return *find_by_order(index);
+  }
+
+  // Returns the index of a value.
+  int index(X key) {
+    if (find(key) == end()) {
+      return -1;
+    }
+    return order_of_key(key);
+  }
+
+  int count(X key) {
+    return (find(key) == end() ? 0 : 1);
+  }
+};
+
+#define TreeMultiSet tree<            \
+  pair<T, int>, null_type, less<int>, \
+  rb_tree_tag,                        \
+  tree_order_statistics_node_update>
+
+template<class T>
+struct OrderedMultiSet : public TreeMultiSet {
+  using TreeMultiSet::find_by_order;
+  using TreeMultiSet::insert;
+  using TreeMultiSet::lower_bound;
+  using TreeMultiSet::order_of_key;
+  using TreeMultiSet::size;
+
+  typedef typename TreeMultiSet::iterator iterator;
+  typedef typename TreeMultiSet::const_iterator const_iterator;
 
   int id = 0;
 
@@ -115,7 +124,7 @@ struct OrderedMultiSet : public OD_MSET {
   }
 
   void erase(iterator it) {
-    OD_MSET::erase(it);
+    TreeMultiSet::erase(it);
   }
 
   void erase(int index) {
