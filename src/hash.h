@@ -24,13 +24,13 @@ struct HashString {
   using ull = unsigned long long;
   const int base = 131;
   vector<ull> hash;
-  vector<ull> hash_rev; // reverse hash
+  vector<ull> hsah; // reverse hash
   vector<ull> mul;
   int n = 0;
 
   void init() {
     hash.resize(N);
-    hash_rev.resize(N);
+    hsah.resize(N);
     mul.resize(N);
     mul[0] = 1;
     for (int i = 1; i < N; i++) {
@@ -60,14 +60,14 @@ struct HashString {
     assert(1 <= l && l <= r);
     int nl = reverse_index(r);
     int nr = reverse_index(l);
-    return hash_rev[nr + 1] - hash_rev[nl] * mul[r - l + 1];
+    return hsah[nr + 1] - hsah[nl] * mul[r - l + 1];
   }
 
   void append(const string& s) {
     int l = s.size();
     for (int i = 0; i < l; i++) {
       hash[n + 1 + i] = hash[n + i] * base + s[i] - 'a';
-      hash_rev[n + 1 + i] = hash_rev[n + i] * base + s[l - i - 1] - 'a';
+      hsah[n + 1 + i] = hsah[n + i] * base + s[l - i - 1] - 'a';
     }
     n += l;
   }

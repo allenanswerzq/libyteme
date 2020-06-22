@@ -1,36 +1,41 @@
+
+template <int N>
 struct Trie {
-  int p = 1;
+  vector<array<int, 26>> node;
   vector<int> leaf;
-  vector<vector<int>> node;
+  int p = 1;
 
-  Trie(int n) {
-    leaf.resize(n);
-    node.resize(n, vector<int>(26));
+  Trie() {
+    node.resize(N);
+    leaf.resize(N);
   }
 
-  int get_pos(char ch) {
-    return ch - 'a';
-  }
+  int get(char ch) { return ch - 'a'; }
 
   void add(const string& s) {
     int u = 0;
-    for (auto& ch : s) {
-      if (!node[u][get_pos(ch)]) {
-        node[u][get_pos(ch)] = p++;
+    for (auto ch : s) {
+      int v = get(ch);
+      if (!node[u][v]) {
+        node[u][v] = p++;
       }
-      u = node[u][get_pos(ch)];
+      u = node[u][v];
     }
     leaf[u]++;
   }
 
-  bool search(const string& s) {
+  bool find(const string& s, int* ret = nullptr) {
     int u = 0;
-    for (auto& ch : s) {
-      if (!node[u][get_pos(ch)]) {
+    for (auto ch : s) {
+      int v = get(ch);
+      if (!node[u][v]) {
+        if (ret) *ret = 0;
         return false;
       }
-      u = node[u][get_pos(ch)];
+      u = node[u][v];
     }
+    *ret = leaf[u];
     return leaf[u] > 0;
   }
 };
+

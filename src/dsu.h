@@ -61,6 +61,7 @@ struct Dsu {
     if (e[a] > e[b]) {
       swap(a, b);
     }
+    // the tree with fewer nodes been added.
     e[a] += e[b];
     e[b] = a;
     m--;

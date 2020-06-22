@@ -80,9 +80,9 @@ struct OrderedMap : public TreeMap {
   }
 };
 
-#define TreeMultiSet tree<            \
-  pair<T, int>, null_type, less<int>, \
-  rb_tree_tag,                        \
+#define TreeMultiSet tree<                     \
+  pair<T, int>, null_type, less<pair<T, int>>, \
+  rb_tree_tag,                                 \
   tree_order_statistics_node_update>
 
 template<class T>
@@ -93,8 +93,8 @@ struct OrderedMultiSet : public TreeMultiSet {
   using TreeMultiSet::order_of_key;
   using TreeMultiSet::size;
 
-  typedef typename TreeMultiSet::iterator iterator;
-  typedef typename TreeMultiSet::const_iterator const_iterator;
+  using iterator = typename TreeMultiSet::iterator;
+  using const_iterator = typename TreeMultiSet::const_iterator;
 
   int id = 0;
 
