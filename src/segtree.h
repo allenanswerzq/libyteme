@@ -1,46 +1,42 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// Zero-indexed segment tree
-class Segtree {
-public:
-  struct node {
-    long long add = 0;
-    long long sum = 0;
+struct Node {
+  int lmax = -INF;
+  int rmax = -INF;
+  int sum = 0;
+  int ans = -INF;
 
-    // NOTE: each node denotes an interval [l, r).
-    void apply(int l, int r, int v) {
-      add += v;
-      sum += v * (r - l);
-    }
+  // NOTE: each Node denotes an interval [l, r).
+  void apply(int l, int r, int v) {
+    lmax = rmax = sum = ans = v;
+  }
 
-    friend ostream& operator<<(ostream& os, node& a) {
-      os << "node(" << a.add << ", " << a.sum << ")";
-      return os;
-    }
-  };
-
-  node unite(const node& a, const node& b) {
-    node res;
+  static Node combine(const Node& a, const Node& b) {
+    Node res;
     res.sum = a.sum + b.sum;
+    // (_______ ____)____
+    res.lmax = max(a.lmax, a.sum + b.lmax);
+    // ___(____ ________)
+    res.rmax = max(b.rmax, b.sum + a.rmax);
+    // ___(___ ____)_____
+    res.ans = max({a.ans, b.ans, a.rmax + b.lmax});
     return res;
   }
 
-  void push_down(int x, int l, int r) {
-    int y = l + (r - l) / 2;
-    if (tree[x].add != 0) {
-      tree[x << 1].apply(l, y, tree[x].add);
-      tree[x << 1 | 1].apply(y, r, tree[x].add);
-      tree[x].add = 0;
-    }
+  static void push_down(vector<Node>& tree, int x, int l, int r) {
   }
 
-  void pull_up(int x) {
-    tree[x] = unite(tree[x << 1], tree[x << 1 | 1]);
+  static void pull_up(vector<Node>& tree, int x) {
+    tree[x] = combine(tree[x << 1], tree[x << 1 | 1]);
   }
+};
 
+// Zero-indexed segment tree
+template <typename T>
+struct Segtree {
   int n;
-  vector<node> tree;
+  vector<T> tree;
 
   void build(int x, int l, int r) {
     if (l + 1 == r) {
@@ -49,7 +45,7 @@ public:
     int y = l + (r - l) / 2;
     build(x << 1, l, y);
     build(x << 1 | 1, y, r);
-    pull_up(x);
+    T::pull_up(tree, x);
   }
 
   template <typename M>
@@ -62,43 +58,57 @@ public:
     int y = l + (r - l) / 2;
     build(x << 1, l, y, v);
     build(x << 1 | 1, y, r, v);
-    pull_up(x);
+    T::pull_up(tree, x);
   }
 
-  node query(int x, int l, int r, int lx, int rx) {
+  T query(int x, int l, int r, int lx, int rx) {
     if (rx <= l || r <= lx) {
-      return node{};
+      return T{};
     }
     if (lx <= l && r <= rx) {
       return tree[x];
     }
-    push_down(x, l, r);
+    T::push_down(tree, x, l, r);
     int y = l + (r - l) / 2;
-    node left = query(x << 1, l, y, lx, rx);
-    node right = query(x << 1 | 1, y, r, lx, rx);
-    node res = unite(left, right);
-    pull_up(x);
+    T left = query(x << 1, l, y, lx, rx);
+    T right = query(x << 1 | 1, y, r, lx, rx);
+    T res = T::combine(left, right);
+    T::pull_up(tree, x);
     return res;
   }
 
+  // NOTE: [lx, rx) denotes the interval need to be modified.
   template <typename M>
   void modify(int x, int l, int r, int lx, int rx, const M& v) {
     if (rx <= l || r <= lx) {
+      // No cover at all.
+      // [lx, rx)  [l ... r)  [lx, rx)
+      // ___________________
+      //         ____________________
       return;
     }
     if (lx <= l && r <= rx) {
+      // Full cover.
+      // [lx_________________rx)
+      //     (x)[l------r)
       tree[x].apply(l, r, v);
       return;
     }
     int y = l + (r - l) / 2;
-    push_down(x, l, r);
+    T::push_down(tree, x, l, r);
     if (lx < y) {
+      // Partial cover left child.
+      //        [lx______rx)
+      //  (x)[l_______y_______r)
       modify(x << 1, l, y, lx, rx, v);
     }
     if (rx > y) {
+      // Partial cover right child.
+      //     [lx_______________rx)
+      //          (x)[l________y________r)
       modify(x << 1 | 1, y, r, lx, rx, v);
     }
-    pull_up(x);
+    T::pull_up(tree, x);
   }
 
   int big(int x) {
@@ -109,47 +119,27 @@ public:
     return t;
   }
 
-  Segtree(int n_) : n(n_) {
-    n = big(n);
+  Segtree(int n_) : n(big(n_)) {
     tree.resize(2 * n);
     build(1, 0, n);
   }
 
   template <typename M>
-  Segtree(const vector<M>& v) {
-    n = big((int) v.size());
+  Segtree(vector<M>& v) : n(big(v.size())) {
     tree.resize(2 * n);
-    vector<M> t = v;
-    t.resize(n);
-    build(1, 0, n, t);
+    v.resize(n);
+    build(1, 0, n, v);
   }
 
-  node query(int lx, int rx) {
+  T query(int lx, int rx) {
     assert(0 <= lx && lx < rx && rx <= n);
     return query(1, 0, n, lx, rx);
-  }
-
-  node query(int p) {
-    assert(0 <= p && p < n);
-    return query(1, 0, n, p, p + 1);
   }
 
   template <typename M>
   void modify(int lx, int rx, const M& v) {
     assert(0 <= lx && lx < rx && rx <= n);
     modify(1, 0, n, lx, rx, v);
-  }
-
-  template <typename M>
-  void modify(int lx, const M& v) {
-    assert(0 <= lx && lx < n);
-    modify(1, 0, n, lx, lx + 1, v);
-  }
-
-  template <typename M>
-  void set(int lx, const M& v) {
-    assert(0 <= lx && lx < n);
-    modify(lx, v - query(lx).sum);
   }
 };
 
