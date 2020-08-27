@@ -1,37 +1,3 @@
-#include <bits/stdc++.h>
-using namespace std;
-
-struct Node {
-  int lmax = -INF;
-  int rmax = -INF;
-  int sum = 0;
-  int ans = -INF;
-
-  // NOTE: each Node denotes an interval [l, r).
-  void apply(int l, int r, int v) {
-    lmax = rmax = sum = ans = v;
-  }
-
-  static Node combine(const Node& a, const Node& b) {
-    Node res;
-    res.sum = a.sum + b.sum;
-    // (_______ ____)____
-    res.lmax = max(a.lmax, a.sum + b.lmax);
-    // ___(____ ________)
-    res.rmax = max(b.rmax, b.sum + a.rmax);
-    // ___(___ ____)_____
-    res.ans = max({a.ans, b.ans, a.rmax + b.lmax});
-    return res;
-  }
-
-  static void push_down(vector<Node>& tree, int x, int l, int r) {
-  }
-
-  static void pull_up(vector<Node>& tree, int x) {
-    tree[x] = combine(tree[x << 1], tree[x << 1 | 1]);
-  }
-};
-
 // Zero-indexed segment tree
 template <typename T>
 struct Segtree {
@@ -48,8 +14,8 @@ struct Segtree {
     T::pull_up(tree, x);
   }
 
-  template <typename M>
-  void build(int x, int l, int r, const vector<M>& v) {
+  template <typename U>
+  void build(int x, int l, int r, const vector<U>& v) {
     if (l + 1 == r) {
       assert(0 <= l && l < (int) v.size());
       tree[x].apply(l, r, v[l]);
@@ -78,8 +44,8 @@ struct Segtree {
   }
 
   // NOTE: [lx, rx) denotes the interval need to be modified.
-  template <typename M>
-  void modify(int x, int l, int r, int lx, int rx, const M& v) {
+  template <typename U>
+  void modify(int x, int l, int r, int lx, int rx, const U& v) {
     if (rx <= l || r <= lx) {
       // No cover at all.
       // [lx, rx)  [l ... r)  [lx, rx)
@@ -143,3 +109,33 @@ struct Segtree {
   }
 };
 
+struct Node {
+  int lmax = -INF;
+  int rmax = -INF;
+  int sum = 0;
+  int ans = -INF;
+
+  // NOTE: each Node denotes an interval [l, r).
+  void apply(int l, int r, int v) {
+    lmax = rmax = sum = ans = v;
+  }
+
+  static Node combine(const Node& a, const Node& b) {
+    Node res;
+    res.sum = a.sum + b.sum;
+    // (_______ ____)____
+    res.lmax = max(a.lmax, a.sum + b.lmax);
+    // ___(____ ________)
+    res.rmax = max(b.rmax, b.sum + a.rmax);
+    // ___(___ ____)_____
+    res.ans = max({a.ans, b.ans, a.rmax + b.lmax});
+    return res;
+  }
+
+  static void push_down(vector<Node>& tree, int x, int l, int r) {
+  }
+
+  static void pull_up(vector<Node>& tree, int x) {
+    tree[x] = combine(tree[x << 1], tree[x << 1 | 1]);
+  }
+};

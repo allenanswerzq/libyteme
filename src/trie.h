@@ -3,6 +3,7 @@ template <int N>
 struct Trie {
   vector<array<int, 26>> node;
   vector<int> leaf;
+  // 0 is reserved for trie root.
   int p = 1;
 
   Trie() {

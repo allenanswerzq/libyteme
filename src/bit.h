@@ -1,44 +1,35 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// One-index based
 template <class T>
 struct Bit {
-// Zero index based binary index tree.
+  vector<T> t;
   int n;
-  vector<T> bt;
 
-  Bit(int n_) : n(n_ + 1) {
-    bt.resize(n);
+  int lowbit(int x) { return x & -x; }
+
+  Bit(int n_): n(n_) {
+    t.resize(n + 1);
   }
 
-  Bit(const vector<int>& v) {
-    n = v.size() + 1;
-    bt.resize(n);
-    for (int i = 0; i < n - 1; i++) {
-      add(i, v[i]);
+  void add(int x, int d) {
+    for (; x <= n; x += lowbit(x)) {
+      t[x] += d;
     }
   }
 
-  // Adds the val k to the ith position
-  void add(int i, int k) {
-    for (++i; i < n; i += i & (-i)) {
-      bt[i] += k;
+  // Query sum of interval [1...x].
+  T query(int x) {
+    T ans = 0;
+    for (; x > 0; x -= lowbit(x)) {
+      ans += t[x];
     }
+    return ans;
   }
 
-  // Returns the sum from index 0 to i
-  T query(int i)  {
-    T res = 0;
-    for (++i; i > 0; i -= i & (-i)) {
-      res += bt[i];
-    }
-    return res;
-  }
-
-  // Queries an interval for zero based indeies
-  T query(int x, int y) {
-    assert(0 <= x && x < n - 1);
-    assert(0 <= y && y < n - 1);
-    return query(y) - (x - 1 >= 0 ? query(x - 1) : 0);
+  T query(int l, int r) {
+    return query(r) - query(l - 1);
   }
 };
+

@@ -41,7 +41,7 @@ void prefix_sum() {
   for (int i = 1; i <= n; i++) {
     ps[i] = ps[i - 1] + a[i];
   }
-  sum[l...r] = ps[r] - ps[l - 1];
+  //sum[l...r] = ps[r] - ps[l - 1];
 }
 
 int a[N][M];
@@ -54,8 +54,8 @@ void prefix_sum2() {
   // (x1, y1)-------
   //         |      |
   //         |______(x2, y2)
-  sum[(x1, y1), (x2, y2)] =
-     ps[x2][y2] - ps[x1 - 1][y2] - ps[x2][y1 - 1] + ps[x1 - 1][y1 - 1];
+  // sum[(x1, y1), (x2, y2)] =
+  //    ps[x2][y2] - ps[x1 - 1][y2] - ps[x2][y1 - 1] + ps[x1 - 1][y1 - 1];
 }
 
 // Difference
@@ -86,7 +86,7 @@ void binary_search() {
 }
 
 // Two pointers (660c.cc)
-voidid solve() {
+void solve() {
   int hi = 0;
   for (int lo = 0; lo < n; lo++) {
     if (lo > hi) {
@@ -344,6 +344,7 @@ bool toposort() {
   return (int) order.size() == n;
 }
 
+
 // Dijkstra shortest path
 void dijkstra(int root) {
   vector<int> dist(n, INF);
@@ -355,11 +356,6 @@ void dijkstra(int root) {
   while (qu.size()) {
     auto tp = qu.top(); qu.pop();
     int d = tp.x, u = tp.y;
-    //   1
-    // /   \
-    // 2   3
-    // \   /
-    //   4
     // If the shortest path already know.
     if (use[u]) continue;
     use[u] = true;
@@ -393,3 +389,4 @@ void bellman_ford() {
     }
   }
 }
+
