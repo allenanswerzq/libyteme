@@ -51,3 +51,16 @@ struct HashString {
     n += l;
   }
 };
+
+struct HashString {
+  static const int base = 131;
+  using ull = unsigned long long;
+
+  static ull get(const string& s) {
+    ull ans = 1;
+    for (char c : s) {
+      ans = ans * base + c - 'a';
+    }
+    return ans;
+  }
+};

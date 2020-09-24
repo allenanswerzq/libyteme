@@ -86,7 +86,7 @@ void binary_search() {
 }
 
 // Two pointers (660c.cc)
-voidid solve() {
+void solve() {
   int hi = 0;
   for (int lo = 0; lo < n; lo++) {
     if (lo > hi) {
@@ -350,7 +350,6 @@ void dijkstra(int root) {
   vector<int> use(n);
   priority_queue<pii, vector<pii>, greater<pii>> qu;
   dist[root] = 0;
-  use[root] = 1;
   qu.push_back({0, root});
   while (qu.size()) {
     auto tp = qu.top(); qu.pop();
