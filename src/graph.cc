@@ -3,7 +3,7 @@ using namespace std;
 
 template <typename T>
 class Graph {
-  public:
+ public:
   struct edge {
     int from;
     int to;
@@ -11,7 +11,7 @@ class Graph {
   };
 
   vector<edge> edges;
-  vector< vector<int> > g;
+  vector<vector<int> > g;
   int n;
 
   function<bool(int)> ignore;
@@ -27,24 +27,21 @@ class Graph {
     ignore = f;
   }
 
-  virtual void reset_ignore_edge_rule() {
-    ignore = nullptr;
-  }
+  virtual void reset_ignore_edge_rule() { ignore = nullptr; }
 };
 
 template <typename T>
 class forest : public Graph<T> {
-  public:
+ public:
   using Graph<T>::edges;
   using Graph<T>::g;
   using Graph<T>::n;
 
-  forest(int _n) : Graph<T>(_n) {
-  }
+  forest(int _n) : Graph<T>(_n) {}
 
   int add(int from, int to, T cost = 1) {
     assert(0 <= from && from < n && 0 <= to && to < n);
-    int id = (int) edges.size();
+    int id = (int)edges.size();
     assert(id < n - 1);
     g[from].push_back(id);
     g[to].push_back(id);
@@ -55,7 +52,7 @@ class forest : public Graph<T> {
 
 template <typename T>
 class dfs_forest : public forest<T> {
-  public:
+ public:
   using forest<T>::edges;
   using forest<T>::g;
   using forest<T>::n;
@@ -71,8 +68,7 @@ class dfs_forest : public forest<T> {
   vector<int> depth;
   vector<T> dist;
 
-  dfs_forest(int _n) : forest<T>(_n) {
-  }
+  dfs_forest(int _n) : forest<T>(_n) {}
 
   void init() {
     pv = vector<int>(n, -1);
@@ -98,9 +94,9 @@ class dfs_forest : public forest<T> {
     dist.clear();
   }
 
-  private:
+ private:
   void do_dfs(int v) {
-    pos[v] = (int) order.size();
+    pos[v] = (int)order.size();
     order.push_back(v);
     sz[v] = 1;
     for (int id : g[v]) {
@@ -117,7 +113,7 @@ class dfs_forest : public forest<T> {
       do_dfs(to);
       sz[v] += sz[to];
     }
-    end[v] = (int) order.size() - 1;
+    end[v] = (int)order.size() - 1;
   }
 
   void do_dfs_from(int v) {
@@ -128,7 +124,7 @@ class dfs_forest : public forest<T> {
     do_dfs(v);
   }
 
-  public:
+ public:
   void dfs(int v, bool clear_order = true) {
     if (pv.empty()) {
       init();
@@ -147,13 +143,13 @@ class dfs_forest : public forest<T> {
         do_dfs_from(v);
       }
     }
-    assert((int) order.size() == n);
+    assert((int)order.size() == n);
   }
 };
 
 template <typename T>
 class lca_forest : public dfs_forest<T> {
-  public:
+ public:
   using dfs_forest<T>::edges;
   using dfs_forest<T>::g;
   using dfs_forest<T>::n;
@@ -163,10 +159,9 @@ class lca_forest : public dfs_forest<T> {
   using dfs_forest<T>::depth;
 
   int h;
-  vector< vector<int> > pr;
+  vector<vector<int> > pr;
 
-  lca_forest(int _n) : dfs_forest<T>(_n) {
-  }
+  lca_forest(int _n) : dfs_forest<T>(_n) {}
 
   inline void build_lca() {
     assert(!pv.empty());
@@ -213,7 +208,7 @@ class lca_forest : public dfs_forest<T> {
 
 template <typename T>
 class hld_forest : public lca_forest<T> {
-  public:
+ public:
   using lca_forest<T>::edges;
   using lca_forest<T>::g;
   using lca_forest<T>::n;
@@ -231,9 +226,7 @@ class hld_forest : public lca_forest<T> {
   vector<int> head;
   vector<int> visited;
 
-  hld_forest(int _n) : lca_forest<T>(_n) {
-    visited.resize(n);
-  }
+  hld_forest(int _n) : lca_forest<T>(_n) { visited.resize(n); }
 
   void build_hld(const vector<int> &vs) {
     for (int tries = 0; tries < 2; tries++) {
@@ -242,10 +235,10 @@ class hld_forest : public lca_forest<T> {
       } else {
         order.clear();
         for (int v : vs) {
-//          assert(depth[v] == -1);
+          //          assert(depth[v] == -1);
           dfs(v, false);
         }
-        assert((int) order.size() == n);
+        assert((int)order.size() == n);
       }
       if (tries == 1) {
         break;
@@ -255,7 +248,7 @@ class hld_forest : public lca_forest<T> {
           continue;
         }
         int best = -1, bid = 0;
-        for (int j = 0; j < (int) g[i].size(); j++) {
+        for (int j = 0; j < (int)g[i].size(); j++) {
           int id = g[i][j];
           if (ignore != nullptr && ignore(id)) {
             continue;
@@ -286,15 +279,12 @@ class hld_forest : public lca_forest<T> {
     }
   }
 
-  void build_hld(int v) {
-    build_hld(vector<int>(1, v));
-  }
+  void build_hld(int v) { build_hld(vector<int>(1, v)); }
 
-  void build_hld_all() {
-    build_hld(vector<int>());
-  }
+  void build_hld_all() { build_hld(vector<int>()); }
 
-  bool apply_on_path(int x, int y, bool with_lca, function<void(int,int,bool)> f) {
+  bool apply_on_path(int x, int y, bool with_lca,
+                     function<void(int, int, bool)> f) {
     // f(x, y, up): up -- whether this part of the path goes up
     assert(!head.empty());
     int z = lca(x, y);
@@ -334,4 +324,3 @@ class hld_forest : public lca_forest<T> {
     return true;
   }
 };
-

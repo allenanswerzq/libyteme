@@ -3,7 +3,7 @@ using namespace std;
 
 template <class T>
 struct CombinaLarge {
-// NOTE: T must supports number inverse opertion
+  // NOTE: T must supports number inverse opertion
   vector<T> fact;
   vector<T> fact_inv;
 
@@ -21,9 +21,7 @@ struct CombinaLarge {
   }
 
   // Choose k from total n items without permutation
-  int nck(int n, int k) {
-    return (*this)(n, k);
-  }
+  int nck(int n, int k) { return (*this)(n, k); }
 
   // Choose k from total n items with permutation
   int npk(int n, int k) {
@@ -33,7 +31,7 @@ struct CombinaLarge {
     return (int)ret;
   }
 
-  int operator() (int n, int k) {
+  int operator()(int n, int k) {
     if (k < 0 || n < k) {
       return int(T(0));
     }
@@ -42,7 +40,7 @@ struct CombinaLarge {
 };
 
 struct Combina {
-// Compute cominatrics for a relative small range up to 10^3
+  // Compute cominatrics for a relative small range up to 10^3
   vector<vector<int>> dp;
 
   // c(n, k) = c(n - 1, k) + c(n - 1, k - 1);
@@ -59,12 +57,8 @@ struct Combina {
   }
 
   // Choose k from total n items without permutation
-  int nck(int n, int k) {
-    return (*this)(n, k);
-  }
+  int nck(int n, int k) { return (*this)(n, k); }
 
   // Choose k from total n items without permutation
-  int operator() (int n, int k) {
-    return dp[n][k];
-  }
+  int operator()(int n, int k) { return dp[n][k]; }
 };

@@ -3,8 +3,7 @@ template <int N>
 struct Trie {
   vector<array<int, 26>> node;
   vector<int> leaf;
-  // 0 is reserved for trie root.
-  int p = 1;
+  int p = 1;  // 0 is reserved for trie root node.
 
   Trie() {
     node.resize(N);
@@ -39,4 +38,3 @@ struct Trie {
     return leaf[u] > 0;
   }
 };
-

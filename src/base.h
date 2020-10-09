@@ -3,11 +3,11 @@
 
 #include <bits/stdc++.h>
 
-#include "types.h"
-#include "random.h"
-#include "logging.h"
 #include "benchmark.h"
 #include "gtest/gtest.h"
+#include "logging.h"
+#include "random.h"
+#include "types.h"
 
 using namespace std;
 

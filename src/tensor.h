@@ -1,4 +1,5 @@
-// Copy from: https://codingcompetitions.withgoogle.com/7ef2e0f9-e329-46fb-be9b-2af37ee23ec0
+// Copy from:
+// https://codingcompetitions.withgoogle.com/7ef2e0f9-e329-46fb-be9b-2af37ee23ec0
 
 // TODO(): add tests
 

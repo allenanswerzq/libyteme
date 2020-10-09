@@ -16,7 +16,7 @@ struct Modnum {
   static int inv(int a, int m) {
     a %= m;
     assert(a);
-    return a == 1 ? 1 : int(m - ll( inv(m, a) ) * ll(m) / a);
+    return a == 1 ? 1 : int(m - ll(inv(m, a)) * ll(m) / a);
   }
 
  public:
@@ -30,18 +30,19 @@ struct Modnum {
 
   explicit operator int() const { return v; }
 
-  friend std::ostream& operator << (std::ostream& out, const MD& n) {
+  friend std::ostream& operator<<(std::ostream& out, const MD& n) {
     return out << int(n);
   }
 
-  friend std::istream& operator >> (std::istream& in, MD& n) {
-    ll x; in >> x;
+  friend std::istream& operator>>(std::istream& in, MD& n) {
+    ll x;
+    in >> x;
     n = MD(x);
     return in;
   }
 
-  friend bool operator == (const MD& a, const MD& b) { return a.v == b.v; }
-  friend bool operator != (const MD& a, const MD& b) { return a.v != b.v; }
+  friend bool operator==(const MD& a, const MD& b) { return a.v == b.v; }
+  friend bool operator!=(const MD& a, const MD& b) { return a.v != b.v; }
 
   MD inv() const {
     MD res;
@@ -55,53 +56,55 @@ struct Modnum {
     return res;
   }
 
-  MD operator- () const {
-    return neg();
-  }
+  MD operator-() const { return neg(); }
 
-  MD operator+ () const {
-    return MD(*this);
-  }
+  MD operator+() const { return MD(*this); }
 
-  MD& operator ++ () {
+  MD& operator++() {
     v++;
     if (v == mod) v = 0;
     return *this;
   }
 
-  MD& operator -- () {
+  MD& operator--() {
     if (v == 0) v = mod;
     v--;
     return *this;
   }
 
-  MD& operator += (const MD& o) {
+  MD& operator+=(const MD& o) {
     v += o.v;
     if (v >= mod) v -= mod;
     return *this;
   }
 
-  MD& operator -= (const MD& o) {
+  MD& operator-=(const MD& o) {
     v -= o.v;
     if (v < 0) v += mod;
     return *this;
   }
 
-  MD& operator *= (const MD& o) {
+  MD& operator*=(const MD& o) {
     v = int(ll(v) * ll(o.v) % mod);
     return *this;
   }
 
-  MD& operator /= (const MD& o) {
-    return *this *= o.inv();
-  }
+  MD& operator/=(const MD& o) { return *this *= o.inv(); }
 
-  friend MD operator ++ (MD& a, int) { MD r = a; ++a; return r; }
-  friend MD operator -- (MD& a, int) { MD r = a; --a; return r; }
-  friend MD operator + (const MD& a, const MD& b) { return MD(a) += b; }
-  friend MD operator - (const MD& a, const MD& b) { return MD(a) -= b; }
-  friend MD operator * (const MD& a, const MD& b) { return MD(a) *= b; }
-  friend MD operator / (const MD& a, const MD& b) { return MD(a) /= b; }
+  friend MD operator++(MD& a, int) {
+    MD r = a;
+    ++a;
+    return r;
+  }
+  friend MD operator--(MD& a, int) {
+    MD r = a;
+    --a;
+    return r;
+  }
+  friend MD operator+(const MD& a, const MD& b) { return MD(a) += b; }
+  friend MD operator-(const MD& a, const MD& b) { return MD(a) -= b; }
+  friend MD operator*(const MD& a, const MD& b) { return MD(a) *= b; }
+  friend MD operator/(const MD& a, const MD& b) { return MD(a) /= b; }
 };
 
 namespace {
@@ -109,23 +112,21 @@ namespace {
 typedef long long ll;
 const int mod = 1e9 + 7;
 
-void add(int &a, int b) {
+void add(int& a, int b) {
   a += b;
   if (a >= mod) {
     a -= mod;
   }
 }
 
-void sub(int &a, int b) {
+void sub(int& a, int b) {
   a -= b;
   if (a < 0) {
     a += mod;
   }
 }
 
-int mul(int a, int b) {
-  return (int) ((ll) a * b % mod);
-}
+int mul(int a, int b) { return (int)((ll)a * b % mod); }
 
 int power(int a, ll b) {
   int res = 1;

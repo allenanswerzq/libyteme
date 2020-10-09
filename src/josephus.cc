@@ -69,9 +69,7 @@ int josephus(int n, int m) {
   return p;
 }
 
-int func_josephus(int N, int S, int p) {
-  return (p + S) % N;
-}
+int func_josephus(int N, int S, int p) { return (p + S) % N; }
 
 #define EXPECT_TRUE(a) assert(a)
 #define EXPECT_FALSE(a) assert(!a)

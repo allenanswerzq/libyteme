@@ -3,16 +3,14 @@ using namespace std;
 
 template <int N, class T>
 struct BinaryHeapGeneric {
-  int hs = 0;   // heap size
+  int hs = 0;  // heap size
   vector<T> heap;
 
-  explicit BinaryHeapGeneric() {
-    heap.resize(N);
-  }
+  explicit BinaryHeapGeneric() { heap.resize(N); }
 
   explicit BinaryHeapGeneric(const vector<T>& v) {
     heap.resize(N);
-    for (int i = 0; i < (int) v.size(); i++) {
+    for (int i = 0; i < (int)v.size(); i++) {
       insert(v[i]);
     }
   }
@@ -87,10 +85,8 @@ struct BinaryHeapGeneric {
   }
 
   // TODO(zq7): Erase a value out.
-  void erase(T v) {
-  }
+  void erase(T v) {}
 };
 
 template <int N>
 using BinaryHeap = BinaryHeapGeneric<N, int>;
-

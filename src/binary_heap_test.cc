@@ -1,4 +1,5 @@
 #include "binary_heap.h"
+
 #include "gtest/gtest.h"
 
 namespace {
@@ -32,11 +33,8 @@ TEST(DeathTest, ExceedHeap) {
   EXPECT_EQ(binary_heap.hs, 5);
   for (int i = 0; i < 6; i++) {
     if (i >= 5) {
-      EXPECT_DEATH({
-        binary_heap.top();
-      }, "Assertion failed");
-    }
-    else {
+      EXPECT_DEATH({ binary_heap.top(); }, "Assertion failed");
+    } else {
       EXPECT_EQ(binary_heap.top(), i + 1);
     }
   }

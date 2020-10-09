@@ -1,8 +1,8 @@
 #include "segtree.h"
 
-#include "random.h"
 #include "benchmark.h"
 #include "gtest/gtest.h"
+#include "random.h"
 
 namespace {
 

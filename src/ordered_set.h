@@ -9,7 +9,8 @@ typedef long long ll;
 using TreeSet = __gnu_pbds::tree<T, null_type, less<int>, rb_tree_tag,
                                  tree_order_statistics_node_update>;
 
-template <class T> struct OrderedSet : public TreeSet {
+template <class T>
+struct OrderedSet : public TreeSet {
   using TreeSet::begin;
   using TreeSet::end;
   using TreeSet::find;
@@ -39,7 +40,8 @@ template <class T> struct OrderedSet : public TreeSet {
 using TreeMap = __gnu_pbds::tree<X, Y, less<int>, rb_tree_tag,
                                  tree_order_statistics_node_update>;
 
-template <class X, class Y> struct OrderedMap : public TreeMap {
+template <class X, class Y>
+struct OrderedMap : public TreeMap {
   using TreeMap::begin;
   using TreeMap::end;
   using TreeMap::find;
@@ -66,11 +68,12 @@ template <class X, class Y> struct OrderedMap : public TreeMap {
   int count(X key) { return (find(key) == end() ? 0 : 1); }
 };
 
-#define TreeMultiSet                                                           \
-  tree<pair<T, int>, null_type, less<pair<T, int>>, rb_tree_tag,               \
+#define TreeMultiSet                                             \
+  tree<pair<T, int>, null_type, less<pair<T, int>>, rb_tree_tag, \
        tree_order_statistics_node_update>
 
-template <class T> struct OrderedMultiSet : public TreeMultiSet {
+template <class T>
+struct OrderedMultiSet : public TreeMultiSet {
   using TreeMultiSet::find_by_order;
   using TreeMultiSet::insert;
   using TreeMultiSet::lower_bound;

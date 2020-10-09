@@ -62,8 +62,7 @@ vector<vector<T>> floyd_warshall(const Graph<T, E>& ga) {
     for (int j = 0; j < n; j++) {
       if (i == j) {
         dist[i][j] = 0;
-      }
-      else {
+      } else {
         dist[i][j] = INF;
       }
     }

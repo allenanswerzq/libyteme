@@ -17,7 +17,7 @@ struct Segtree {
   template <typename U>
   void build(int x, int l, int r, const vector<U>& v) {
     if (l + 1 == r) {
-      assert(0 <= l && l < (int) v.size());
+      assert(0 <= l && l < (int)v.size());
       tree[x].apply(l, r, v[l]);
       return;
     }
@@ -77,7 +77,7 @@ struct Segtree {
     T::pull_up(tree, x);
   }
 
-  int big(int x) {
+  int ceil_pow2(int x) {
     int t = 1;
     while (t < x) {
       t <<= 1;
@@ -85,13 +85,13 @@ struct Segtree {
     return t;
   }
 
-  Segtree(int n_) : n(big(n_)) {
+  Segtree(int n_) : n(ceil_pow2(n_)) {
     tree.resize(2 * n);
     build(1, 0, n);
   }
 
   template <typename M>
-  Segtree(vector<M>& v) : n(big(v.size())) {
+  Segtree(vector<M>& v) : n(ceil_pow2(v.size())) {
     tree.resize(2 * n);
     v.resize(n);
     build(1, 0, n, v);
@@ -116,9 +116,7 @@ struct Node {
   int ans = -INF;
 
   // NOTE: each Node denotes an interval [l, r).
-  void apply(int l, int r, int v) {
-    lmax = rmax = sum = ans = v;
-  }
+  void apply(int l, int r, int v) { lmax = rmax = sum = ans = v; }
 
   static Node combine(const Node& a, const Node& b) {
     Node res;
@@ -132,8 +130,7 @@ struct Node {
     return res;
   }
 
-  static void push_down(vector<Node>& tree, int x, int l, int r) {
-  }
+  static void push_down(vector<Node>& tree, int x, int l, int r) {}
 
   static void pull_up(vector<Node>& tree, int x) {
     tree[x] = combine(tree[x << 1], tree[x << 1 | 1]);

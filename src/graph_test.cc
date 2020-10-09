@@ -1,5 +1,6 @@
-#include "base.h"
 #include "graph.h"
+
+#include "base.h"
 #include "tarjan_scc.h"
 
 namespace {
@@ -38,7 +39,7 @@ TEST(TarjanScc, TestSCC) {
   g.add(6, 7);
   g.add(7, 7);
   EXPECT_EQ(g.m, 14);
-  auto tarjan = TarjanScc<int> (&g);
+  auto tarjan = TarjanScc<int>(&g);
   vector<int> scc = tarjan.compute_scc();
   vector<vector<int>> gp(tarjan.scc_cnt);
   for (int i = 0; i < g.n; i++) {
@@ -47,14 +48,8 @@ TEST(TarjanScc, TestSCC) {
   for (int i = 0; i < tarjan.scc_cnt; i++) {
     sort(gp[i].begin(), gp[i].end());
   }
-  vector<vector<int>> right = {
-    {7},
-    {5, 6},
-    {2, 3},
-    {0, 1, 4}
-  };
+  vector<vector<int>> right = {{7}, {5, 6}, {2, 3}, {0, 1, 4}};
   EXPECT_EQ(gp, right);
 }
 
 }  // namespace
-

@@ -1,4 +1,5 @@
 #include "ordered_set.h"
+
 #include "gtest/gtest.h"
 
 namespace {

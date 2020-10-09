@@ -17,13 +17,12 @@ limitations under the License.
 
 #include <sys/time.h>
 
+#include <algorithm>
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
-
-#include <algorithm>
-#include <vector>
-#include <chrono>
 #include <limits>
+#include <vector>
 
 namespace byteme {
 namespace testing {
@@ -148,8 +147,8 @@ void Benchmark::Run(const char* pattern) {
     }
   }
 
-  printf("%-*s %10s %10s %10s\n", width,
-         "Benchmark", "Time(us)", "Total(ms)", "Iterations");
+  printf("%-*s %10s %10s %10s\n", width, "Benchmark", "Time(us)", "Total(ms)",
+         "Iterations");
   printf("%s\n", string(width + 34, '-').c_str());
 
   for (auto b : *all_benchmarks) {

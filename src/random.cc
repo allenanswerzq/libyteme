@@ -14,6 +14,7 @@ limitations under the License.
 ==============================================================================*/
 
 #include "random.h"
+
 #include <random>
 
 static std::mt19937_64* InitRng() {
@@ -39,4 +40,3 @@ uint32 New32() {
   // mutex_lock l(mu);
   return (*rng)();
 }
-

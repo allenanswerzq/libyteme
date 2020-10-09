@@ -3,7 +3,7 @@ using namespace std;
 
 // Link SO: c-why-is-boosthash-combine-the-best-way-to-combine-hash-values
 size_t hash_combine(const size_t& a, const size_t& b) {
-  return a ^ (b + 0x9e3779b9 + (a << 6) + (a >> 2) );
+  return a ^ (b + 0x9e3779b9 + (a << 6) + (a >> 2));
 }
 
 namespace std {
@@ -17,14 +17,14 @@ struct hash<vector<int>> {
     return seed;
   }
 };
-}
+}  // namespace std
 
 template <int N>
 struct HashString {
   using ull = unsigned long long;
   const int base = 131;
   vector<ull> hash;
-  vector<ull> hsah; // reverse hash
+  vector<ull> hsah;  // reverse hash
   vector<ull> mul;
   int n = 0;
 

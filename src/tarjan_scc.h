@@ -8,23 +8,21 @@ struct NodeScc {
   NodeScc(int id_) : id(id_) {}
 };
 
-template<class T>
+template <class T>
 using GraphScc = GraphNode<NodeScc, T>;
 
 // Compute strongly connected components.
-template<class T>
+template <class T>
 struct TarjanScc {
   int index = 0;
-  GraphScc<T>* g = nullptr; // not owned
+  GraphScc<T>* g = nullptr;  // not owned
 
   // For each node, will assign a scc group id to it.
   vector<int> scc;
   int scc_cnt = 0;
   stack<NodeScc*> stk;
 
-  explicit TarjanScc(GraphScc<T>* g_) : g(g_) {
-    scc.resize(g->n, -1);
-  }
+  explicit TarjanScc(GraphScc<T>* g_) : g(g_) { scc.resize(g->n, -1); }
 
   vector<int> compute_scc() {
     index = 0;
@@ -50,11 +48,9 @@ struct TarjanScc {
       if (w->to->index == -1) {
         strongconnect(w->to);
         v->lowlink = min(v->lowlink, w->to->lowlink);
-      }
-      else if (w->to->onstack) {
+      } else if (w->to->onstack) {
         v->lowlink = min(v->lowlink, w->to->index);
-      }
-      else {
+      } else {
         // Do nothing.
       }
     }

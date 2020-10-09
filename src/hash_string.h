@@ -3,7 +3,7 @@ struct HashString {
   using ull = unsigned long long;
   const int base = 131;
   vector<ull> hash;
-  vector<ull> hsah; // reverse hash
+  vector<ull> hsah;  // reverse hash
   vector<ull> mul;
   int n = 0;
 
@@ -36,7 +36,7 @@ struct HashString {
   }
 
   ull get_rev(int l, int r) {
-    assert(1 <= l && l <= r);
+    assert(0 <= l && l <= r);
     int nl = reverse_index(r);
     int nr = reverse_index(l);
     return hsah[nr + 1] - hsah[nl] * mul[r - l + 1];

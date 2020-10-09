@@ -1,6 +1,7 @@
 #include "combina.h"
-#include "modular.h"
+
 #include "gtest/gtest.h"
+#include "modular.h"
 
 namespace {
 

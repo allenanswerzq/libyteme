@@ -1,8 +1,8 @@
 #include "ring_queue.h"
 
-#include "random.h"
 #include "benchmark.h"
 #include "gtest/gtest.h"
+#include "random.h"
 
 namespace {
 
@@ -38,29 +38,26 @@ TEST(RingQueue, Push) {
     rq.push(v[i]);
   }
   for (int i = 0; i < n; i++) {
-    EXPECT_EQ(rq.front(),  v[i]);
+    EXPECT_EQ(rq.front(), v[i]);
     rq.pop();
   }
 }
 
 TEST(RingQueue, Limit) {
-// test push exceeds the limit of the RingQueue
+  // test push exceeds the limit of the RingQueue
   const int n = 10000;
   RingQueue<uint64, n> rq;
   for (int i = 0; i < 10007; i++) {
     if (i >= n) {
-      EXPECT_DEATH({
-        rq.push(New64());
-      }, "Assertion failed");
-    }
-    else {
+      EXPECT_DEATH({ rq.push(New64()); }, "Assertion failed");
+    } else {
       rq.push(New64());
     }
   }
 }
 
 TEST(RingQueue, Random) {
-// Random push and pop in the RingQueue
+  // Random push and pop in the RingQueue
   const int n = 10000;
   RingQueue<uint64, n> rq;
   deque<uint64> dq;
@@ -70,8 +67,7 @@ TEST(RingQueue, Random) {
     if (op % 2) {
       rq.push(x);
       dq.push_back(x);
-    }
-    else {
+    } else {
       EXPECT_EQ(dq.size(), rq.size());
       if (!dq.empty()) {
         EXPECT_EQ(rq.front(), dq.front());
@@ -93,4 +89,3 @@ static void BM_RingQueue(int iter) {
 BENCHMARK(BM_RingQueue);
 
 }  // namespace
-
