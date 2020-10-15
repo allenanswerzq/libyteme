@@ -10,6 +10,7 @@ void quick_sort(vector<int>& v, int l, int r) {
       swap(v[lo], v[hi]);
     }
   }
+  // v[hi] < pivot && v[lo] > pivot
   swap(v[l], v[hi]);
   quick_sort(v, l, hi - 1);
   quick_sort(v, hi + 1, r);
@@ -103,6 +104,35 @@ vector<int> bucket_sort(vector<int>& A) {
     }
   }
   return ans;
+}
+
+// -----------------------------------------------------------------------------
+ListNode* merge_list(ListNode* l1, ListNode* l2) {
+  if (!l1) return l2;
+  if (!l2) return l1;
+  ListNode *root, *p;
+  if (l1->val < l2->val) {
+    root = l1;
+    l1 = l1->next;
+  }
+  else {
+    root = l2;
+    l2 = l2->next;
+  }
+  p = root;
+  while (l1 || l2) {
+    if (!l2 || (l1 && l1->val < l2->val)) {
+      p->next = l1;
+      l1 = l1->next;
+    }
+    else {
+      p->next = l2;
+      l2 = l2->next;
+    }
+    p = p->next;
+  }
+  p->next = nullptr;
+  return root;
 }
 
 // -----------------------------------------------------------------------------
