@@ -1,22 +1,26 @@
 #include <bits/extc++.h>
 #include <bits/stdc++.h>
 using namespace std;
-#define x first
-#define y second
 #define all(x) (x).begin(), (x).end()
-typedef long long ll;
+#define ll long long
 
-using TreeSet = __gnu_pbds::tree<T, null_type, less<int>, rb_tree_tag,
-                                 tree_order_statistics_node_update>;
+// clang-format off
+template <class T>
+using TreeSet = __gnu_pbds::tree<T,
+                __gnu_pbds::null_type, less<int>,
+                __gnu_pbds::rb_tree_tag,
+                __gnu_pbds::tree_order_statistics_node_update>;
+// clang-format on
 
 template <class T>
-struct OrderedSet : public TreeSet {
-  using TreeSet::begin;
-  using TreeSet::end;
-  using TreeSet::find;
-  using TreeSet::find_by_order;
-  using TreeSet::order_of_key;
-  using TreeSet::size;
+struct OrderedSet : public TreeSet<T> {
+  using TreeSet<T>::begin;
+  using TreeSet<T>::end;
+  using TreeSet<T>::find;
+  using TreeSet<T>::find_by_order;
+  using TreeSet<T>::order_of_key;
+  using TreeSet<T>::size;
+  using TreeSet<T>::end;
 
   // Returns the `ith` element in a set zero index based.
   T at(int index) {
@@ -37,19 +41,24 @@ struct OrderedSet : public TreeSet {
   int count(T x) { return (find(x) == end() ? 0 : 1); }
 };
 
-using TreeMap = __gnu_pbds::tree<X, Y, less<int>, rb_tree_tag,
-                                 tree_order_statistics_node_update>;
+// clang-format off
+template <class X, class Y>
+using TreeMap = __gnu_pbds::tree<X, Y, less<int>,
+                __gnu_pbds::rb_tree_tag,
+                __gnu_pbds::tree_order_statistics_node_update>;
+// clang-format on
 
 template <class X, class Y>
-struct OrderedMap : public TreeMap {
-  using TreeMap::begin;
-  using TreeMap::end;
-  using TreeMap::find;
-  using TreeMap::find_by_order;
-  using TreeMap::order_of_key;
-  using TreeMap::size;
+struct OrderedMap : public TreeMap<X, Y> {
+  using Base = TreeMap<X, Y>;
+  using Base::begin;
+  using Base::end;
+  using Base::find;
+  using Base::find_by_order;
+  using Base::order_of_key;
+  using Base::size;
 
-  typedef std::pair<X, Y> PXY;
+  using PXY = std::pair<X, Y>;
 
   // Returns the `ith` element in a set zero index based.
   PXY at(int index) {
@@ -68,55 +77,45 @@ struct OrderedMap : public TreeMap {
   int count(X key) { return (find(key) == end() ? 0 : 1); }
 };
 
-#define TreeMultiSet                                             \
-  tree<pair<T, int>, null_type, less<pair<T, int>>, rb_tree_tag, \
-       tree_order_statistics_node_update>
+// clang-format off
+template <class T>
+using TreeMultiSet = __gnu_pbds::tree<pair<T, int>,
+                     __gnu_pbds::null_type, less<pair<T, int>>,
+                     __gnu_pbds::rb_tree_tag,
+                     __gnu_pbds::tree_order_statistics_node_update>;
+// clang-format on
 
 template <class T>
-struct OrderedMultiSet : public TreeMultiSet {
-  using TreeMultiSet::find_by_order;
-  using TreeMultiSet::insert;
-  using TreeMultiSet::lower_bound;
-  using TreeMultiSet::order_of_key;
-  using TreeMultiSet::size;
+struct OrderedMultiSet : public TreeMultiSet<T> {
+ public:
+  using TreeMultiSet<T>::find_by_order;
+  using TreeMultiSet<T>::insert;
+  using TreeMultiSet<T>::lower_bound;
+  using TreeMultiSet<T>::order_of_key;
+  using TreeMultiSet<T>::size;
+  using TreeMultiSet<T>::end;
 
-  using iterator = typename TreeMultiSet::iterator;
-  using const_iterator = typename TreeMultiSet::const_iterator;
+  using iterator = typename TreeMultiSet<T>::iterator;
 
-  int id = 0;
-
-  void insert(T x) { insert({x, id++}); }
+  void insert(T x) { insert(make_pair(x, id_++)); }
 
   T at(int index) {
     assert(0 <= index && index < (int)size());
     return find_by_order(index)->first;
   }
 
-  // Get the `index`th element.
-  const_iterator att(int index) const {
-    assert(0 <= index && index < (int)size());
-    return find_by_order(index);
-  }
+  T operator[](int index) { return at(index); }
 
-  iterator att(int index) {
-    assert(0 <= index && index < (int)size());
-    return find_by_order(index);
-  }
+  void erase(iterator it) { TreeMultiSet<T>::erase(it); }
 
-  // Get the index of a specific key `x`.
-  int index(int x) { return order_of_key({x, 0}); }
+  void erase(int index) { erase(find(at(index))); }
 
-  void erase(iterator it) { TreeMultiSet::erase(it); }
-
-  void erase(int index) { erase(att(index)); }
-
-  // O(logc + count(x))
-  void erase_all(T x) {
-    int lo = lower_bound(x);
-    int hi = upper_bound(x);
-    int cnt = hi - lo;
-    for (int i = 0; i < cnt; i++) {
-      erase(lo);
+  iterator find(T x) {
+    size_t p = lower_bound(x);
+    if (p < size()) {
+      return find_by_order(p);
+    } else {
+      return end();
     }
   }
 
@@ -126,7 +125,9 @@ struct OrderedMultiSet : public TreeMultiSet {
 
   int count(T x) {
     int d = upper_bound(x) - lower_bound(x);
-    // assert(d >= 1);
     return d;
   }
+
+ private:
+  size_t id_ = 0;
 };
