@@ -382,7 +382,7 @@ struct Bit {
 
 //-----------------------------------------------------------------------------
 // bfs
-bool use[N];
+bool use[N]; // whether a node is in queue before
 vector<int> g[N];
 void bfs() {
   deque<int> qu;
@@ -413,6 +413,31 @@ void dfs(int u) {
 }
 
 // topological sort
+void toposort_dfs() {
+  vector<int> ans;
+  vector<int> vis(N);
+  std::function<void(int)> dfs = [&](int u) {
+    vis[u] = 1; // active
+    for (int v : g[u]) {
+      if (vis[v] == 1) {
+        // Cycle exists.
+        cout << "IMPOSSIBLE\n";
+        exit(0);
+      }
+      else if (vis[v] == 0) {
+        dfs(v);
+      }
+    }
+    ans.push_back(u);
+    vis[u] = 2; // finished
+  };
+  for (int i = 0; i < N; i++) {
+    if (!vis[i]) {
+      dfs(i);
+    }
+  }
+}
+
 bool toposort() {
   vector<int> free_nodes;
   vector<int> deg;  // incoming degree

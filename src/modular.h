@@ -109,8 +109,13 @@ struct Modnum {
 
 namespace {
 
-typedef long long ll;
 const int mod = 1e9 + 7;
+
+int inv(int a) {
+  a %= mod;
+  assert(a);
+  return a == 1 ? 1 : int(mod - ll(inv(mod, a)) * ll(mod) / a);
+}
 
 void add(int& a, int b) {
   a += b;

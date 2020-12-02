@@ -11,7 +11,7 @@ vector<int> lis(vector<int>& a) {
   vector<int> lis(n);
   int len = 0;
   for (int i = 0; i < n; ++i) {
-    auto ix = lower_bound(lis.begin(), lis.begin() + len, a[i]) - lis.begin();
+    int ix = lower_bound(lis.begin(), lis.begin() + len, a[i]) - lis.begin();
     lis[ix] = a[i];
     dp[ix] = i;
     pr[i] = ix ? dp[ix - 1] : -1;
@@ -28,6 +28,22 @@ vector<int> lis(vector<int>& a) {
   }
   reverse(ans.begin(), ans.end());
   return ans;
+}
+
+vector<int> lis(vector<int>& a) {
+  vector<int> ans;
+  set<int> st;
+  for (int i = 0; i < a.size(); i++) {
+    auto it = st.lower_bound(a[i]);
+    if (it == st.end()) {
+      st.insert(a[i]);
+    }
+    else {
+      st.erase(it);
+      st.insert(a[i]);
+    }
+  }
+  return vector<int>(all(st));
 }
 
 void test(vector<int> a) {

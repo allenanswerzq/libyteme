@@ -2,7 +2,32 @@
 #include <bits/stdc++.h>
 using namespace std;
 #define all(x) (x).begin(), (x).end()
-#define ll long long
+using ll = long long;
+
+template <class T>
+class OrderedSet : public TreeSet<T> {
+ public:
+  using TreeSet<T>::begin;
+  using TreeSet<T>::end;
+  using TreeSet<T>::find;
+  using TreeSet<T>::erase;
+  using TreeSet<T>::find_by_order;
+  using TreeSet<T>::order_of_key;
+  using TreeSet<T>::size;
+  using iterator = typename TreeSet<T>::iterator;
+
+  T at(int index) {
+    assert(0 <= index && index < (int)size());
+    return *find_by_order(index);
+  }
+
+  T operator[](int index) { return at(index); }
+
+  int count(T x) { return (find(x) == end() ? 0 : 1); }
+
+  int lower_bound(T x) { return order_of_key(x); }
+};
+
 
 // clang-format off
 template <class T>
@@ -13,16 +38,17 @@ using TreeSet = __gnu_pbds::tree<T,
 // clang-format on
 
 template <class T>
-struct OrderedSet : public TreeSet<T> {
+class OrderedSet : public TreeSet<T> {
+ public:
   using TreeSet<T>::begin;
   using TreeSet<T>::end;
   using TreeSet<T>::find;
+  using TreeSet<T>::erase;
   using TreeSet<T>::find_by_order;
   using TreeSet<T>::order_of_key;
   using TreeSet<T>::size;
-  using TreeSet<T>::end;
+  using iterator = typename TreeSet<T>::iterator;
 
-  // Returns the `ith` element in a set zero index based.
   T at(int index) {
     assert(0 <= index && index < (int)size());
     return *find_by_order(index);
@@ -30,15 +56,9 @@ struct OrderedSet : public TreeSet<T> {
 
   T operator[](int index) { return at(index); }
 
-  // Returns the index of a value.
-  int index(T val) {
-    if (find(val) == end()) {
-      return -1;
-    }
-    return order_of_key(val);
-  }
-
   int count(T x) { return (find(x) == end() ? 0 : 1); }
+
+  int lower_bound(T x) { return order_of_key(x); }
 };
 
 // clang-format off
@@ -120,13 +140,6 @@ struct OrderedMultiSet : public TreeMultiSet<T> {
   }
 
   int lower_bound(T x) { return order_of_key({x, 0}); }
-
-  int upper_bound(T x) { return order_of_key({x + 1, 0}); }
-
-  int count(T x) {
-    int d = upper_bound(x) - lower_bound(x);
-    return d;
-  }
 
  private:
   size_t id_ = 0;
