@@ -1,10 +1,12 @@
+
 // Zero-index based
 template <class T>
 class Bit {
  public:
   Bit(int n) : n_(n) { t_.resize(n_ + 1); }
 
-  void add(int x, int d) {
+  // Add to interval [0...x].
+  void add(int x, T d) {
     for (++x; x <= n_; x += lowbit(x)) {
       t_[x] += d;
     }
@@ -19,6 +21,7 @@ class Bit {
     return ans;
   }
 
+  // Query sum of interval [l...r].
   T query(int l, int r) { return query(r) - query(l - 1); }
 
  private:
@@ -26,6 +29,7 @@ class Bit {
   int n_;
   vector<T> t_;
 };
+
 
 // 2d Bit: Zero-index based
 template <class T>
@@ -42,7 +46,7 @@ class Bit {
     }
   }
 
-  // Query sum of interval [0...x].
+  // NOTE: Query sum of interval [0...x].
   T query(int x, int y) {
     T ans = 0;
     for (++x; x > 0; x -= lowbit(x)) {
