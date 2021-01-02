@@ -1,17 +1,18 @@
-#include <bits/stdc++.h>
-using namespace std;
-
-// String processing algortihms:
-// KMP
-// Rabin-Barp
-// z_function
-// Boyer-Morre
-// Aho-Corasick
-// Suffix tree
-// Suffix array
-// Skew
-namespace string_func {
 struct kmp_t {
+  vector<int> prefix_function(const string& s) {
+    int n = (int) s.size();
+    vector<int> pi(n);
+    for (int i = 1; i < n; i++) {
+      int j = pi[i - 1];
+      while (j > 0 && s[i] != s[j]) {
+        j = pi[j - 1];
+      }
+      if (s[i] == s[j]) j++;
+      pi[i] = j;
+    }
+    return pi;
+  }
+
   vector<int> fail_table(const string& pat) {
     int n = pat.size();
     vector<int> fail(n, 0);
@@ -57,20 +58,18 @@ vector<int> search(const string& text, const string& pat) {
 }
 
 // Ref: https://cp-algorithms.com/string/z-function.html
-vector<int> z_function(string s) {
-  int n = (int)s.length();
+vector<int> z_function(const string& s) {
+  int n = (int) s.size();
   vector<int> z(n);
-  for (int i = 1, l = 0, r = 0; i < n; ++i) {
-    if (i <= r) {
-      z[i] = min(r - i + 1, z[i - l]);
-    }
+  int x = 0, y = 0;
+  for (int i = 1; i < n; ++i) {
+    z[i] = max(0, min(z[i - x], y - i + 1));
     while (i + z[i] < n && s[z[i]] == s[i + z[i]]) {
-      ++z[i];
-    }
-    if (i + z[i] - 1 > r) {
-      l = i, r = i + z[i] - 1;
+      x = i;
+      y = i + z[i];
+      z[i]++;
     }
   }
   return z;
 }
-}  // namespace string_func
+

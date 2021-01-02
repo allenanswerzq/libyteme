@@ -34,7 +34,9 @@ struct Trie {
       }
       u = node[u][v];
     }
-    *ret = leaf[u];
+    if (ret) {
+      *ret = leaf[u];
+    }
     return leaf[u] > 0;
   }
 };
