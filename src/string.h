@@ -1,18 +1,4 @@
 struct kmp_t {
-  vector<int> prefix_function(const string& s) {
-    int n = (int) s.size();
-    vector<int> pi(n);
-    for (int i = 1; i < n; i++) {
-      int j = pi[i - 1];
-      while (j > 0 && s[i] != s[j]) {
-        j = pi[j - 1];
-      }
-      if (s[i] == s[j]) j++;
-      pi[i] = j;
-    }
-    return pi;
-  }
-
   vector<int> fail_table(const string& pat) {
     int n = pat.size();
     vector<int> fail(n, 0);
@@ -73,3 +59,21 @@ vector<int> z_function(const string& s) {
   return z;
 }
 
+vector<int> prefix_function(const string& s) {
+  //           -----....-----
+  //           [-j-]
+  // [-j-]
+  // -----j....-----i
+  // -----.....-----++++++++++++++++++++
+  int n = (int) s.size();
+  vector<int> next(n);
+  for (int i = 1; i < n; i++) {
+    int j = next[i - 1];
+    while (j > 0 && s[i] != s[j]) {
+      j = next[j - 1];
+    }
+    if (s[i] == s[j]) j++;
+    next[i] = j;
+  }
+  return next;
+}
