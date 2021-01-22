@@ -17,6 +17,7 @@ struct Trie {
     for (auto ch : s) {
       int v = get(ch);
       if (!node[u][v]) {
+        // If node does not exist, create a new one
         node[u][v] = p++;
       }
       u = node[u][v];

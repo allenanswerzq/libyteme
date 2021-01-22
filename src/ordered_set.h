@@ -1,12 +1,13 @@
 #include <bits/extc++.h>
 #include <bits/stdc++.h>
 using namespace std;
+using namespace __gnu_pbds;
 #define all(x) (x).begin(), (x).end()
 using ll = long long;
 
 template <class T>
 class OrderedSet : public TreeSet<T> {
- public:
+public:
   using TreeSet<T>::begin;
   using TreeSet<T>::end;
   using TreeSet<T>::find;
@@ -28,18 +29,16 @@ class OrderedSet : public TreeSet<T> {
   int lower_bound(T x) { return order_of_key(x); }
 };
 
-
 // clang-format off
 template <class T>
-using TreeSet = __gnu_pbds::tree<T,
-                __gnu_pbds::null_type, less<int>,
-                __gnu_pbds::rb_tree_tag,
-                __gnu_pbds::tree_order_statistics_node_update>;
+using TreeSet = tree<T,
+                null_type, less<int>,
+                rb_tree_tag,
+                tree_order_statistics_node_update>;
 // clang-format on
 
-template <class T>
-class OrderedSet : public TreeSet<T> {
- public:
+template <class T> class OrderedSet : public TreeSet<T> {
+public:
   using TreeSet<T>::begin;
   using TreeSet<T>::end;
   using TreeSet<T>::find;
@@ -63,13 +62,12 @@ class OrderedSet : public TreeSet<T> {
 
 // clang-format off
 template <class X, class Y>
-using TreeMap = __gnu_pbds::tree<X, Y, less<int>,
-                __gnu_pbds::rb_tree_tag,
-                __gnu_pbds::tree_order_statistics_node_update>;
+using TreeMap = tree<X, Y, less<int>,
+                rb_tree_tag,
+                tree_order_statistics_node_update>;
 // clang-format on
 
-template <class X, class Y>
-struct OrderedMap : public TreeMap<X, Y> {
+template <class X, class Y> struct OrderedMap : public TreeMap<X, Y> {
   using Base = TreeMap<X, Y>;
   using Base::begin;
   using Base::end;
@@ -99,15 +97,14 @@ struct OrderedMap : public TreeMap<X, Y> {
 
 // clang-format off
 template <class T>
-using TreeMultiSet = __gnu_pbds::tree<pair<T, int>,
-                     __gnu_pbds::null_type, less<pair<T, int>>,
-                     __gnu_pbds::rb_tree_tag,
-                     __gnu_pbds::tree_order_statistics_node_update>;
+using TreeMultiSet = tree<pair<T, int>,
+                     null_type, less<pair<T, int>>,
+                     rb_tree_tag,
+                     tree_order_statistics_node_update>;
 // clang-format on
 
-template <class T>
-struct OrderedMultiSet : public TreeMultiSet<T> {
- public:
+template <class T> struct OrderedMultiSet : public TreeMultiSet<T> {
+public:
   using TreeMultiSet<T>::find_by_order;
   using TreeMultiSet<T>::insert;
   using TreeMultiSet<T>::lower_bound;
@@ -141,6 +138,6 @@ struct OrderedMultiSet : public TreeMultiSet<T> {
 
   int lower_bound(T x) { return order_of_key({x, 0}); }
 
- private:
+private:
   size_t id_ = 0;
 };

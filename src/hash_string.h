@@ -156,16 +156,3 @@ int lexicographically_minimal_string(const string& s) {
   }
   return min(i, j);
 }
-
-// -------------------------------------------------------------------------
-void test() {
-  // [0....255 0....255]
-  uint8_t a = 128;
-  for (uint8_t b = 128; b < 255; b++) {
-    uint8_t c = a + b;
-    int d = (a + b) % 256 + 1;
-    int e = (a + b) % 255;
-    trace((int)b, (int)c, d, e);
-    assert(e == d);
-  }
-}
