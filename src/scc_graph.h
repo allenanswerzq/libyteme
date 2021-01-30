@@ -111,9 +111,7 @@ class SccGraph {
 };
 
 class SATSolver {
- public:
-  explicit SATSolver(int n) : n_(n + 1), g_(2 * n_) {}
-
+ public: explicit SATSolver(int n) : n_(n + 1), g_(2 * n_) {}
   // (u | v) && ()
   // NOTE: use -x to represent not x here, so make sure `0` will not appear.
   void add(int u, int v) {
