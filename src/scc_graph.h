@@ -150,3 +150,97 @@ class SATSolver {
   int n_;
   SccGraph g_;
 };
+
+// Not tested
+struct TarjanScc {
+  vector<vector<int>> g;
+  vector<int> scc;
+  vector<int> pre;
+  vector<int> low;
+  vector<int> stk;
+  int scc_cnt;
+  int order;
+  int n;
+  int m;
+
+  TarjanScc(int n_) : n(n_) {
+    g.resize(n);
+    scc.resize(n);
+    low.resize(n);
+    pre.resize(n, -1);
+    scc_cnt = 0;
+    order = 0;
+  }
+
+  void add(int u, int v) {
+    g[u].push_back(v);
+    m++;
+  }
+
+  void dfs(int u) {
+    pre[u] = order++;
+    low[u] = pre[u];
+    stk.push_back(u);
+    for (int v : g[u]) {
+      if (pre[v] == -1) {
+        // Forward edge
+        dfs(v);
+        low[u] = min(low[u], low[v]);
+      }
+      else {
+        // Back edge or cross edge
+        low[u] = min(low[u], pre[v]);
+      }
+    }
+    if (low[u] == pre[u]) {
+      // Root node of a scc
+      scc[u] = scc_cnt;
+      while (true) {
+        int v = stk.pop_back();
+        scc[v] = scc_cnt;
+        pre[v] = m;     // ignore the cross edge
+        if (v == u) break;
+      }
+      scc_cnt++;
+    }
+  }
+
+  void do_dfs() {
+    for (int i = 0; i < N; i++) {
+      if (pre[i] == -1) {
+        dfs(i);
+      }
+    }
+    assert(stk.empty());
+  }
+
+  vector<vector<int>> scc_group() {
+    vector<vector<int>> ans;
+    for (int i = 0; i < g.scc_cnt; i++) {
+      vector<int> cur;
+      for (int j = 0; j < N; j++) {
+        if (scc[j] == i) {
+          cur.push_back(j);
+        }
+      }
+      ans.push_back(cur);
+    }
+    return ans;
+  }
+
+  vector<vector<int>> meta_graph() {
+    vector<set<int>> mg(scc_count);
+    vector<vector<int>> ans(scc_cnt);
+    for (int i = 0; i < N; i++) {
+      for (int v : g[i]) {
+        if (scc[i] != scc[v]) {
+          if (!mg[scc[i]].count(scc[v])) {
+            mg[scc[i]].insert(scc[v]);
+            ans[scc[i]].push_back(scc[v]);
+          }
+        }
+      }
+    }
+    return ans;
+  }
+};
