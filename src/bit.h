@@ -5,7 +5,6 @@ class Bit {
  public:
   Bit(int n) : n_(n) { t_.resize(n_ + 1); }
 
-  // Add to interval [0...x].
   void add(int x, T d) {
     for (++x; x <= n_; x += lowbit(x)) {
       t_[x] += d;
