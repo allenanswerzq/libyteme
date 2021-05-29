@@ -115,18 +115,20 @@ int inv(int a, int m) {
   return a == 1 ? 1 : int(m - ll(inv(m, a)) * ll(m) / a);
 }
 
-void add(int& a, int b) {
+int add(int &a, int b) {
   a += b;
   if (a >= mod) {
     a -= mod;
   }
+  return a;
 }
 
-void sub(int& a, int b) {
+int sub(int &a, int b) {
   a -= b;
   if (a < 0) {
     a += mod;
   }
+  return a;
 }
 
 int mul(int a, int b) { return (int)((ll)a * b % mod); }

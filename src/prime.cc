@@ -26,6 +26,8 @@ vector<int> get_prime() {
   return prime;
 }
 
+// time complexity: O(sqrt(n))
+// number of prime pactors: O(log(n))
 template <class T>
 vector<int> prime_factor(T n) {
   vector<int> fact;
