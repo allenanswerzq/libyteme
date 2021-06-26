@@ -151,11 +151,12 @@ class SATSolver {
   SccGraph g_;
 };
 
-// Not tested
 struct TarjanScc {
   vector<vector<int>> g;
   vector<int> scc;
+  // Pre order sequence
   vector<int> pre;
+  // Low link value
   vector<int> low;
   vector<int> stk;
   int scc_cnt;
@@ -172,7 +173,7 @@ struct TarjanScc {
     order = 0;
   }
 
-  void add(int u, int v) {
+  void add_edge(int u, int v) {
     g[u].push_back(v);
     m++;
   }
@@ -196,9 +197,20 @@ struct TarjanScc {
       // Root node of a scc
       scc[u] = scc_cnt;
       while (true) {
-        int v = stk.pop_back();
+        int v = stk.back();
+        stk.pop_back();
         scc[v] = scc_cnt;
-        pre[v] = m;     // ignore the cross edge
+        // NOTE: ignore the cross edge
+        // r -> u, r -> v, v -> u
+        //        r
+        //     /     \
+        //    u <---- v
+        //
+        // When processing node v, the edge v -> u will be a cross edge,
+        // even though it reaches u, but it does not effect the low link
+        // value that v can escape.
+        //
+        pre[v] = m;
         if (v == u) break;
       }
       scc_cnt++;
@@ -206,7 +218,7 @@ struct TarjanScc {
   }
 
   void do_dfs() {
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < n; i++) {
       if (pre[i] == -1) {
         dfs(i);
       }
@@ -215,28 +227,25 @@ struct TarjanScc {
   }
 
   vector<vector<int>> scc_group() {
-    vector<vector<int>> ans;
-    for (int i = 0; i < g.scc_cnt; i++) {
-      vector<int> cur;
-      for (int j = 0; j < N; j++) {
-        if (scc[j] == i) {
-          cur.push_back(j);
-        }
-      }
-      ans.push_back(cur);
+    vector<vector<int>> ans(scc_cnt);
+    for (int i = 0; i < n; i++) {
+      assert(0 <= scc[i] && scc[i] < scc_cnt);
+      ans[scc[i]].push_back(i);
     }
     return ans;
   }
 
   vector<vector<int>> meta_graph() {
-    vector<set<int>> mg(scc_count);
+    vector<set<int>> mg(scc_cnt);
     vector<vector<int>> ans(scc_cnt);
-    for (int i = 0; i < N; i++) {
-      for (int v : g[i]) {
-        if (scc[i] != scc[v]) {
-          if (!mg[scc[i]].count(scc[v])) {
-            mg[scc[i]].insert(scc[v]);
-            ans[scc[i]].push_back(scc[v]);
+    for (int u = 0; u < n; u++) {
+      for (int v : g[u]) {
+        int su = scc[u];
+        int sv = scc[v];
+        if (su != sv) {
+          if (!mg[su].count(sv)) {
+            mg[su].insert(sv);
+            ans[su].push_back(sv);
           }
         }
       }
