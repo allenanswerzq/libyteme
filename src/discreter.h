@@ -1,30 +1,25 @@
-// TODO: rewrite this, more cleaner interface
+template <bool ONE = false>
 struct Discreter {
-  vector<int> e;
-  vector<int> a;
-  unordered_map<int, int> t;
-  int mx = 0;
-  bool one_index = true;
+  unordered_map<int, int> raw_dis_;
+  vector<int> sorted_;
 
-  Discreter(vector<int>& v) {
-    a = v;
-    e = v;
-    sort(all(e));
-    e.erase(unique(all(e)), e.end());
-    for (const auto& x : v) {
-      int p = lower_bound(all(e), x) - e.begin() + one_index;
-      mx = max(mx, p);
-      t[x] = p;
+  Discreter(const vector<int> &val) {
+    sorted_ = val;
+    sort(all(sorted_));
+    sorted_.erase(unique(all(sorted_)), sorted_.end());
+    for (int &x : val) {
+      int p = lower_bound(all(sorted_), x) - sorted_.begin() + ONE;
+      raw_dis_[x] = p;
     }
   }
 
-  int at(int x) { return a[x]; }
-
-  int size() { return mx; }
+  // The maxinum value after discreting
+  int max() { return sorted_.size(); }
 
   // Given a raw value, returns the discreted value.
-  int get_dis(int x) { return t[x]; }
+  int get(int r) { return raw_dis_[r]; }
 
-  // Given a discreted value, return the raw value.
-  int get_raw(int x) { return e[x - one_index]; }
+  // Given a discreted value, returns the raw value.
+  int old(int d) { return sorted_[d - ONE]; }
 };
+
