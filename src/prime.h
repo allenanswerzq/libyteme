@@ -1,3 +1,24 @@
+// Time complexity: O(n)
+template <int N>
+vector<int> sieve() {
+  // Every number can be represented as i = lp[i] * x,
+  // where lp[i] is the mininum prime factor, thus lp[i] <= lp[x]
+  vector<int> lp(N);
+  vector<int> pr;
+  for (int i = 2; i < N; i++) {
+    if (lp[i] == 0) {
+      // i is a prime number
+      lp[i] = i;
+      pr.push_back(i);
+    }
+    // Now, we know the mininum prime factor for i is lp[i]
+    for (int j = 0; j < (int) pr.size() && pr[j] <= lp[i] && i * pr[j] < N; j++) {
+      lp[i * pr[j]] = pr[j];
+    }
+  }
+  return pr;
+}
+
 template <int N>
 bitset<N> sieve() {
   bitset<N> bs;
@@ -5,9 +26,9 @@ bitset<N> sieve() {
   bs[0] = 0;
   bs[1] = 0;
   for (int i = 2; i < N; i++) {
-    if (bs.test(i)) {
+    if (bs[i] == 1) {
       for (int j = i + i; j < N; j += i) {
-        bs.reset(j);
+        bs[j] = 0;
       }
     }
   }

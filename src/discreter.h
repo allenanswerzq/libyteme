@@ -1,3 +1,4 @@
+// TODO: rewrite this, more cleaner interface
 struct Discreter {
   vector<int> e;
   vector<int> a;

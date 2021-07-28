@@ -67,3 +67,30 @@ class Bit {
   int n_, m_;
   vector<vector<T>> t_;
 };
+
+// Compute the maxinum value in [0, ...x]
+template <class T>
+class Bit {
+ public:
+  Bit(int n) : n_(n) { t_.resize(n_ + 1); }
+
+  void add(int x, T d) {
+    for (++x; x <= n_; x += lowbit(x)) {
+      t_[x] = max(t_[x], d);
+    }
+  }
+
+  // Query maxinum value of interval [0...x].
+  T query(int x) {
+    T ans = 0;
+    for (++x; x > 0; x -= lowbit(x)) {
+      ans = max(t_[x], ans);
+    }
+    return ans;
+  }
+
+ private:
+  int lowbit(int x) { return x & -x; }
+  int n_;
+  vector<T> t_;
+};
