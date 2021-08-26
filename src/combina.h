@@ -1,6 +1,56 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+template <int MOD>
+struct CombinaLarge {
+  vector<ll> fact;
+  vector<ll> fact_inv;
+
+  explicit CombinaLarge(int n) {
+    fact.resize(n + 1);
+    fact_inv.resize(n + 1);
+    fact[0] = 1;
+    for (int i = 1; i <= n; ++i) {
+      fact[i] = fact[i - 1] * i % MOD;
+    }
+    // Fermat's little theorem
+    fact_inv[n] = power(fact[n], MOD - 2);
+    for (int i = n - 1; i >= 0; --i) {
+      fact_inv[i] = fact_inv[i + 1] * (i + 1) % MOD;
+    }
+  }
+
+  ll power(ll x, int p){
+    ll ans = 1;
+    while (p > 0) {
+      if (p & 1) {
+        ans = x * ans % MOD;
+      }
+      x = x * x % MOD;
+      p >>= 1;
+    }
+    return ans;
+  }
+
+  // Choose k from total n items without permutation
+  int nck(int n, int k) { return (*this)(n, k); }
+
+  // Choose k from total n items with permutation
+  int npk(int n, int k) {
+    // nPk = nCk * k!
+    ll ret = nck(n, k);
+    ret = ret * fact[k] % MOD;
+    return ret % MOD;
+  }
+
+  int operator()(int n, int k) {
+    if (k < 0 || n < k) {
+      return 0;
+    }
+    return fact[n] * fact_inv[k] % MOD * fact_inv[n - k] % MOD;
+  }
+};
+
 template <class T>
 struct CombinaLarge {
   // NOTE: T must supports number inverse opertion
@@ -16,7 +66,7 @@ struct CombinaLarge {
     }
     fact_inv[n] = fact[n].inv();
     for (int i = n - 1; i >= 0; --i) {
-      fact_inv[i] = fact_inv[i + 1] * i;
+      fact_inv[i] = fact_inv[i + 1] * (i + 1);
     }
   }
 
