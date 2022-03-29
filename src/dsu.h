@@ -48,6 +48,8 @@ struct Dsu {
     return root;
   }
 
+  bool same(int a, int b) { return find(a) == find(b); }
+
   bool join(int a, int b) {
     a = find(a);
     b = find(b);

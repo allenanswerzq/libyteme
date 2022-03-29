@@ -7,7 +7,7 @@ struct Discreter {
     sorted_ = val;
     sort(all(sorted_));
     sorted_.erase(unique(all(sorted_)), sorted_.end());
-    for (int &x : val) {
+    for (int x : val) {
       int p = lower_bound(all(sorted_), x) - sorted_.begin() + ONE;
       raw_dis_[x] = p;
     }

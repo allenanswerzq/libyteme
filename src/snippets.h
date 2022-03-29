@@ -134,6 +134,42 @@ ListNode* merge_list(ListNode* l1, ListNode* l2) {
 }
 
 // -----------------------------------------------------------------------------
+struct ListNode {
+  ListNode(int val_, ListNode* next_ = nullptr)
+    : val(val_), next(next_) {}
+
+  int val;
+  ListNode* next{nullptr};
+};
+
+ListNode* build(const vector<int>& v) {
+  ListNode* node = nullptr;
+  for (int i = (int) v.size() - 1; i >= 0; i--) {
+    node = new ListNode(v[i], node);
+  }
+  return new ListNode(-1, node); // dummy head node
+}
+
+void traverse_list(ListNode* l1) {
+  for (ListNode **p = &l1->next; *p; p = &(*p)->next) {
+    cout << (*p)->val << " ";
+  }
+  cout << "\n";
+}
+
+void delete_node(ListNode* l1, int val) {
+  for (ListNode **p = &l1->next; *p; p = &(*p)->next) {
+    while ((*p)->val == val) {
+      *p = (*p)->next;
+    }
+  }
+}
+
+void insert_after(ListNode* l1, int val) {
+  l1->next = new ListNode(val, l1->next);
+}
+
+// -----------------------------------------------------------------------------
 // Prefix sum
 int a[N];
 void prefix_sum() {
@@ -242,39 +278,45 @@ void solve() {
       stk.push_back(i);
       continue;
     }
+
     while (!stk.empty() && a[stk.back()] > a[i]) {
       ll height = a[stk.back()];
       stk.pop_back();
       ll lo = stk.empty() ? -1 : stk.back();
       ans = max(ans, (i - lo - 1) * height);
     }
+
     stk.push_back(i);
   }
   cout << ans << "\n";
 }
 
 // Queue (137.cc)
+// 输入一个长度为 n 的整数序列，从中找出一段长度不超过 m 的连续子序列，
+// 使得子序列中所有数的和最大。
+// 注意： 子序列的长度至少是 1。
 void solve() {
-  int n, m;
-  cin >> n >> m;
-  vector<int> a(n + 1);
-  vector<ll> ps(n + 1);
-  for (int i = 1; i <= n; i++) {
+  int N, M; cin >> N >> M;
+  vector<int> a(N + 1);
+  vector<ll> ps(N + 1);
+  for (int i = 1; i <= N; i++) {
     cin >> a[i];
     ps[i] = ps[i - 1] + a[i];
   }
-  trace(a, ps);
+
   deque<int> qu;
   qu.push_back(0);
   ll ans = INT_MIN;
-  for (int i = 1; i <= n; i++) {
-    // [......i
-    while (qu.size() && i - qu.front() > m) {
+  for (int i = 1; i <= N; i++) {
+    // front [ <-, <-, <-,
+    //                     i
+    while (qu.size() && i - qu.front() > M) {
       qu.pop_front();
     }
+
     assert(qu.size());
     ans = max(ans, ps[i] - ps[qu.front()]);
-    trace(ans, i, qu.front());
+
     while (qu.size() && ps[i] <= ps[qu.back()]) {
       qu.pop_back();
     }
@@ -414,6 +456,7 @@ void dfs(int u) {
 
 // topological sort
 void toposort_dfs() {
+  // a --> b, b must start before a
   vector<int> ans;
   vector<int> vis(N);
   std::function<void(int)> dfs = [&](int u) {
@@ -427,6 +470,9 @@ void toposort_dfs() {
       else if (vis[v] == 0) {
         dfs(v);
       }
+      else {
+        // already processed
+      }
     }
     ans.push_back(u);
     vis[u] = 2; // finished
@@ -439,6 +485,7 @@ void toposort_dfs() {
 }
 
 bool toposort() {
+  // a --> b, a must start before b
   vector<int> free_nodes;
   vector<int> deg;  // incoming degree
   for (int i = 0; i < n; i++) {
@@ -464,26 +511,23 @@ bool toposort() {
 // Dijkstra shortest path
 void dijkstra(int root) {
   vector<int> dist(n, INF);
-  vector<int> use(n);
-  priority_queue<pii, vector<pii>, greater<pii>> qu;
+  priority_queue<ar, vector<ar>> qu;
   dist[root] = 0;
   qu.push_back({0, root});
   while (qu.size()) {
-    auto tp = qu.top();
-    qu.pop();
-    int d = tp.x, u = tp.y;
+    auto tp = -qu.top(); qu.pop();
+    int d = tp[0], u = tp[1];
     //   1
     // /   \
-    // 2   3
+    // |   3
     // \   /
     //   4
     // If the shortest path already know.
-    if (use[u]) continue;
-    use[u] = true;
+    if (dist[u] < d) continue;
     for (auto v : g[u]) {
       if (dist[v] > d + weight[u][v]) {
         dist[v] = d + weight[u][v];
-        qu.push_back({dist[v], v});
+        qu.push_back({-dist[v], v});
       }
     }
   }
