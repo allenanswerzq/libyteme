@@ -19,6 +19,7 @@ vector<int> sieve() {
   return pr;
 }
 
+// time complexity: O(nlogn)
 template <int N>
 bitset<N> sieve() {
   bitset<N> bs;

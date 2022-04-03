@@ -158,3 +158,59 @@ struct Segtree {
   }
 };
 
+int ceil_pow2(int n) {
+  int x = 0;
+  while ((1U << x) < (unsigned int)(n))
+    x++;
+  return x;
+}
+
+// zero-indexed
+struct Segtree {
+  Segtree(const std::vector<int> &v) : n(int(v.size())) {
+    log = ceil_pow2(n);
+    size = 1 << log;
+    d = std::vector<int>(2 * size);
+    for (int i = 0; i < n; i++)
+      d[size + i] = v[i];
+    for (int i = size - 1; i >= 1; i--) {
+      update(i);
+    }
+  }
+
+  void set(int p, int x) {
+    assert(0 <= p && p < n);
+    p += size;
+    d[p] = x;
+    for (int i = 1; i <= log; i++)
+      update(p >> i);
+  }
+
+  int get(int p) {
+    assert(0 <= p && p < n);
+    return d[p + size];
+  }
+
+  // [l, r)
+  int prod(int l, int r) {
+    assert(0 <= l && l <= r && r <= n);
+    l += size;
+    r += size;
+    int sml = d[l], smr = d[r - 1];
+    while (l < r) {
+      if (l & 1) sml = __gcd(sml, d[l++]);
+      if (r & 1) smr = __gcd(d[--r], smr);
+      l >>= 1;
+      r >>= 1;
+    }
+    return __gcd(sml, smr);
+  }
+
+  int all_prod() { return d[1]; }
+
+  int n, size, log;
+  std::vector<int> d;
+
+  void update(int k) { d[k] = __gcd(d[2 * k], d[2 * k + 1]); }
+};
+

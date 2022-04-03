@@ -6,11 +6,12 @@ void quick_sort(vector<int>& v, int l, int r) {
   while (lo <= hi) {
     while (lo <= hi && v[lo] <= pivot) lo++;
     while (lo <= hi && v[hi] >= pivot) hi--;
+    // invariant: v[hi] < pivot && v[lo] > pivot
     if (lo < hi) {
       swap(v[lo], v[hi]);
     }
   }
-  // v[hi] < pivot && v[lo] > pivot
+  // invariant: v[hi] < pivot && v[lo] > pivot
   swap(v[l], v[hi]);
   quick_sort(v, l, hi - 1);
   quick_sort(v, hi + 1, r);
@@ -21,9 +22,9 @@ void merge_sort(vector<int>& v, vector<int>& aux, int lo, int hi) {
   int md = lo + (hi - lo) / 2;
   merge_sort(v, aux, lo, md);
   merge_sort(v, aux, md + 1, hi);
-  int i = lo;
-  int j = md + 1;
-  for (int k = lo; k <= hi; k++) {
+  //  i          j
+  // [lo ... md md+1...hi]
+  for (int i = lo, j = md + 1, k = lo; k <= hi; k++) {
     if (j > hi || (i <= md && v[i] <= v[j])) {
       aux[k++] = v[i++];
     } else {
@@ -110,14 +111,7 @@ vector<int> bucket_sort(vector<int>& A) {
 ListNode* merge_list(ListNode* l1, ListNode* l2) {
   if (!l1) return l2;
   if (!l2) return l1;
-  ListNode *root, *p;
-  if (l1->val < l2->val) {
-    root = l1;
-    l1 = l1->next;
-  } else {
-    root = l2;
-    l2 = l2->next;
-  }
+  ListNode *root = new ListNode(-1), *p;
   p = root;
   while (l1 || l2) {
     if (!l2 || (l1 && l1->val < l2->val)) {
@@ -130,7 +124,7 @@ ListNode* merge_list(ListNode* l1, ListNode* l2) {
     p = p->next;
   }
   p->next = nullptr;
-  return root;
+  return root->next;
 }
 
 // -----------------------------------------------------------------------------
@@ -139,7 +133,7 @@ struct ListNode {
     : val(val_), next(next_) {}
 
   int val;
-  ListNode* next{nullptr};
+  ListNode* next;
 };
 
 ListNode* build(const vector<int>& v) {
@@ -176,6 +170,7 @@ void prefix_sum() {
   for (int i = 1; i <= n; i++) {
     ps[i] = ps[i - 1] + a[i];
   }
+  // length l to r
   sum[l... r] = ps[r] - ps[l - 1];
 }
 
@@ -196,6 +191,7 @@ void prefix_sum2() {
 // Difference
 void func() {
   // Add value x to interval [l...r]
+  //                          x...0  -x
   v[l] += x;
   v[r + 1] -= x;
   for (int i = l; i <= r; i++) {
@@ -221,8 +217,7 @@ void binary_search() {
 
 // Two pointers (660c.cc)
 void solve() {
-  int hi = 0;
-  for (int lo = 0; lo < n; lo++) {
+  for (int lo = 0, hi = 0; lo < n; lo++) {
     if (lo > hi) {
       hi = lo;
       cnt = 0;
@@ -292,7 +287,7 @@ void solve() {
 }
 
 // Queue (137.cc)
-// 输入一个长度为 n 的整数序列，从中找出一段长度不超过 m 的连续子序列，
+// 输入一个长度为 n 的整数序列，从中找出一段长度不超过 <= m 的连续子序列，
 // 使得子序列中所有数的和最大。
 // 注意： 子序列的长度至少是 1。
 void solve() {
@@ -314,6 +309,7 @@ void solve() {
       qu.pop_front();
     }
 
+    // ps[i] - ps[i - m] -> i-m+1 ... i (m)
     assert(qu.size());
     ans = max(ans, ps[i] - ps[qu.front()]);
 
@@ -424,33 +420,42 @@ struct Bit {
 
 //-----------------------------------------------------------------------------
 // bfs
-bool use[N]; // whether a node is in queue before
+vector<int> vis(N); // whether a node is in queue before
 vector<int> g[N];
 void bfs() {
   deque<int> qu;
   qu.push_back(root);
-  use[root] = true;
+  vis[root] = true;
   while (qu.size()) {
     int u = qu.front();
     qu.pop_front();
-    //
+    // vis[u] = true; this is wrong, we might add the same node
+    // into the queue more than once
     for (auto v : g[u]) {
-      if (!use[v]) {
+      if (!vis[v]) {
         qu.push_back(v);
-        use[v] = true;
+        vis[v] = true; // this is correct
       }
     }
   }
 }
 
-// dfs
-bool use[N];
+// dfs (any graph), shouldn't pass `parent`
+vector<int> vis(N);
 void dfs(int u) {
-  use[u] = true;
+  vis[u] = true;
   for (auto v : g[u]) {
-    if (!use[v]) {
+    if (!vis[v]) {
       dfs(v);
     }
+  }
+}
+
+// for a tree (with cycle)
+void dfs(int u, int parent) {
+  for (int v : g[u]) {
+    if (v == parent) continue;
+    dfs(v);
   }
 }
 
@@ -471,9 +476,11 @@ void toposort_dfs() {
         dfs(v);
       }
       else {
+        assert(vis[v] == 2);
         // already processed
       }
     }
+    // all tasks need to be done finished, then we start to do `u`
     ans.push_back(u);
     vis[u] = 2; // finished
   };
@@ -485,7 +492,7 @@ void toposort_dfs() {
 }
 
 bool toposort() {
-  // a --> b, a must start before b
+  // a --> b, a must start before b, deg[b]++
   vector<int> free_nodes;
   vector<int> deg;  // incoming degree
   for (int i = 0; i < n; i++) {
@@ -517,13 +524,15 @@ void dijkstra(int root) {
   while (qu.size()) {
     auto tp = -qu.top(); qu.pop();
     int d = tp[0], u = tp[1];
-    //   1
-    // /   \
-    // |   3
-    // \   /
-    //   4
+    //     1
+    //   /   \(1)
+    //(2)|   3
+    //   \   /(0)
+    //     4
     // If the shortest path already know.
     if (dist[u] < d) continue;
+    // step1: (-2, 4)(4 in queue first), (-1, 3)
+    // step2: (-1, 4), (-2, 4)
     for (auto v : g[u]) {
       if (dist[v] > d + weight[u][v]) {
         dist[v] = d + weight[u][v];
