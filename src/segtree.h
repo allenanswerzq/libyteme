@@ -170,12 +170,20 @@ struct Segtree {
   Segtree(const std::vector<int> &v) : n(int(v.size())) {
     log = ceil_pow2(n);
     size = 1 << log;
-    d = std::vector<int>(2 * size);
+    d = vector<int>(2 * size);
     for (int i = 0; i < n; i++)
       d[size + i] = v[i];
     for (int i = size - 1; i >= 1; i--) {
       update(i);
     }
+  }
+
+  int ceil_pow2(int n) {
+    int x = 0;
+    while ((1u << x) < n) {
+      x++;
+    }
+    return x;
   }
 
   void set(int p, int x) {

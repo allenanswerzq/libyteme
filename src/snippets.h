@@ -123,7 +123,6 @@ ListNode* merge_list(ListNode* l1, ListNode* l2) {
     }
     p = p->next;
   }
-  p->next = nullptr;
   return root->next;
 }
 
@@ -152,7 +151,7 @@ void traverse_list(ListNode* l1) {
 }
 
 void delete_node(ListNode* l1, int val) {
-  for (ListNode **p = &l1->next; *p; p = &(*p)->next) {
+  for (ListNode **p = &l1; *p; p = &(*p)->next) {
     while ((*p)->val == val) {
       *p = (*p)->next;
     }
@@ -188,14 +187,27 @@ void prefix_sum2() {
       ps[x2][y2] - ps[x1 - 1][y2] - ps[x2][y1 - 1] + ps[x1 - 1][y1 - 1];
 }
 
-// Difference
+// Difference array
 void func() {
-  // Add value x to interval [l...r]
-  //                          x...0  -x
+  // Zero indexed
+  vector<int> A(N)
+  vector<int> v(N);
+  for (int i = 0; i < N; i++) {
+    // NOTE: the fisrt value equals to itself
+    v[i] = A[i] - (i > 0 ? A[i - 1] : 0);
+  }
+  // Add value x to interval A[l...r]
+  //
   v[l] += x;
   v[r + 1] -= x;
-  for (int i = l; i <= r; i++) {
-    v[i + 1] += a[i];
+  // Compute the final array after applying add ops
+  for (int i = 0; i + 1 < N; i++) {
+    v[i + 1] += v[i];
+  }
+  // Compute the prefix sum
+  vector<int> pre(N + 1);
+  for (int i = 0; i < N; i++) {
+    pre[i + 1] = pre[i] + v[i];
   }
 }
 
@@ -218,10 +230,10 @@ void binary_search() {
 // Two pointers (660c.cc)
 void solve() {
   for (int lo = 0, hi = 0; lo < n; lo++) {
-    if (lo > hi) {
-      hi = lo;
-      cnt = 0;
-    }
+    // if (lo > hi) {
+    //   hi = lo;
+    //   cnt = 0;
+    // }
     while (hi < n && check(hi)) {
       hi++;
     }
@@ -390,7 +402,7 @@ struct Dsu {
   }
 };
 
-// Bit
+// Bit one-indexed
 template <class T>
 struct Bit {
   vector<T> t;
@@ -418,6 +430,67 @@ struct Bit {
   T query(int l, int r) { return query(r) - query(l - 1); }
 };
 
+// zero-indexed
+// range min/max/gcd query
+struct Segtree {
+  Segtree(const std::vector<int> &v) : n(int(v.size())) {
+    log = ceil_pow2(n);
+    size = 1 << log;
+    d = vector<int>(2 * size);
+    for (int i = 0; i < n; i++) {
+      d[size + i] = v[i];
+    }
+    for (int i = size - 1; i >= 1; i--) {
+      update(i);
+    }
+  }
+
+  int ceil_pow2(int n) {
+    int x = 0;
+    while ((1u << x) < n) {
+      x++;
+    }
+    return x;
+  }
+
+  void set(int p, int x) {
+    assert(0 <= p && p < n);
+    p += size;
+    d[p] = x;
+    for (int i = 1; i <= log; i++) {
+      update(p >> i);
+    }
+  }
+
+  int get(int p) {
+    assert(0 <= p && p < n);
+    return d[p + size];
+  }
+
+  // [l, r)
+  int prod(int l, int r) {
+    assert(0 <= l && l <= r && r <= n);
+    l += size;
+    r += size;
+    int sml = d[l];   // for computing gcd
+    int smr = d[r - 1];
+    while (l < r) {
+      if (l & 1) sml = __gcd(sml, d[l++]);
+      if (r & 1) smr = __gcd(d[--r], smr);
+      l >>= 1;
+      r >>= 1;
+    }
+    return __gcd(sml, smr);
+  }
+
+  int all_prod() { return d[1]; }
+
+  int n, size, log;
+  std::vector<int> d;
+
+  void update(int k) { d[k] = __gcd(d[2 * k], d[2 * k + 1]); }
+};
+
 //-----------------------------------------------------------------------------
 // bfs
 vector<int> vis(N); // whether a node is in queue before
@@ -431,6 +504,12 @@ void bfs() {
     qu.pop_front();
     // vis[u] = true; this is wrong, we might add the same node
     // into the queue more than once
+    //
+    //     1
+    //   /   \(1)
+    //(2)|   3 first add 3 into the queue
+    //   \   /
+    //     4
     for (auto v : g[u]) {
       if (!vis[v]) {
         qu.push_back(v);
@@ -451,7 +530,7 @@ void dfs(int u) {
   }
 }
 
-// for a tree (with cycle)
+// for a tree (without cycle)
 void dfs(int u, int parent) {
   for (int v : g[u]) {
     if (v == parent) continue;
@@ -515,6 +594,98 @@ bool toposort() {
   return (int)order.size() == n;
 }
 
+// all toposort orders
+// a --> b, a must start before b, deg[b]++
+vector<int> vis(N);
+vector<int> deg(N);
+vector<vector<int>> paths;
+void dfs(vector<int>& ans) {
+  // This order should be a array with size N that euqals some permutation,
+  for (int i = 0; i < N; i++) {
+    // On every position, try use all numbers
+    if (deg[i] == 0 && vis[i] == 0) {
+      for (int v : g[u]) {
+        deg[v]--;
+      }
+      ans.push_back(i);
+      vis[i] = 1;
+
+      dfs(ans);     // backtracking
+
+      ans.pop_back();
+      vis[i] = 0;
+      for (int v : g[u]) {
+        deg[v]++;
+      }
+    }
+  }
+  if (ans.size() == N) {
+    paths.push_back(ans);
+  }
+}
+
+//
+// 从 1∼n 这 n 个整数中随机选出人意多个，输出所有可能的选择方案。
+int N;
+vector<vector<int>> paths;
+void dfs(int i, vector<int>& ans) {
+  if (i == N) {
+    paths.push_back(ans);
+    return;
+  }
+
+  ans.push_back(i + 1);
+  dfs(i + 1, ans);
+  ans.pop_back();
+
+  dfs(i + 1, ans);
+}
+
+// 从 1∼n 这 n 个整数中随机选出m个，输出所有可能的选择方案。
+int N, M;
+void dfs(int i, vector<int>& ans) {
+  if (ans.size() == M) {
+    for (int k = 0; k < (int) ans.size(); k++) {
+      cout << ans[k] << (k == ans.size() - 1 ? '\n' : ' ');
+    }
+    return;
+  }
+
+  if (i == N) return;
+
+  ans.push_back(i + 1);
+  dfs(i + 1, ans);
+  ans.pop_back();
+
+  dfs(i + 1, ans);
+}
+
+// 把 1∼n 这 n 个整数排成一行后随机打乱顺序，输出所有可能的次序。
+int N;
+vector<int> vis;
+void dfs(vector<int>& ans) {
+  // On every position, try use all numbers
+  for (int i = 0; i < N; i++) {
+    if (vis[i] == 0) {
+      vis[i] = 1;
+      ans.push_back(i + 1);
+
+      dfs(ans);
+
+      ans.pop_back();
+      vis[i] = 0;
+    }
+  }
+  if (ans.size() == N) {
+    for (int k = 0; k < N; k++) {
+      cout << ans[k] << (k == N - 1 ? '\n' : ' ');
+    }
+  }
+}
+//
+//------------------------------------------------------------------------------
+
+
 // Dijkstra shortest path
 void dijkstra(int root) {
   vector<int> dist(n, INF);
@@ -522,8 +693,8 @@ void dijkstra(int root) {
   dist[root] = 0;
   qu.push_back({0, root});
   while (qu.size()) {
-    auto tp = -qu.top(); qu.pop();
-    int d = tp[0], u = tp[1];
+    auto tp = qu.top(); qu.pop();
+    int d = -tp[0], u = tp[1];
     //     1
     //   /   \(1)
     //(2)|   3
