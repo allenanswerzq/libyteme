@@ -107,6 +107,52 @@ vector<int> bucket_sort(vector<int>& A) {
   return ans;
 }
 
+//
+// NOTE: modify a set or map ==> erase the old then insert the new.
+//
+// st.erase(st.find(x))
+//
+// auto it = st.lower_bound(x);
+// if (it != st.end()) [st.begin(), it - 1] < x
+//                     [it ... it.end()] >= x
+// if (it == st.end()) all values < x
+// if (it == st.begin()) all values >= x
+//
+// auto it = st.upper_bound(x);
+// if (it != st.begin()) [st.begin() ... it - 1] <= x
+//                       [it .... it.end()] > x
+// if (it == st.end()) -> all values <= x or st is empty
+// if (it == st.begin()) -> all values > x or st is empty()
+//
+void solve() {
+  int N, M, K; cin >> N >> M >> K;
+  multiset<int> st;
+  for (int i = 0; i < N; i++) {
+    int x; cin >> x;
+    st.insert(x);
+  }
+  vector<int> A(M);
+  for (auto& a : A) {
+    cin >> a;
+  }
+  sort(all(A));
+  int ans = 0;
+  for (int i = 0; i < M; i++) {
+    auto it = st.lower_bound(A[i] - K);
+    auto pt = st.upper_bound(A[i] + K);
+    if (it != pt) {
+      ans++;
+      st.erase(it);
+    }
+  }
+  cout << ans << "\n";
+}
+//
+// interval problems
+// 1. sort interval by first
+// 2. sort interval by second
+// 3. sort edge point (x, -1), (y, 1)
+//
 // -----------------------------------------------------------------------------
 ListNode* merge_list(ListNode* l1, ListNode* l2) {
   if (!l1) return l2;
@@ -126,7 +172,6 @@ ListNode* merge_list(ListNode* l1, ListNode* l2) {
   return root->next;
 }
 
-// -----------------------------------------------------------------------------
 struct ListNode {
   ListNode(int val_, ListNode* next_ = nullptr)
     : val(val_), next(next_) {}
@@ -227,9 +272,24 @@ void binary_search() {
   }
 }
 
+int lo = i;
+int hi = N;
+while (lo + 1 <= hi) {
+  int s = A[lo] + A[hi];
+  if (s == X) {
+    break;
+  }
+  else if (s > X) {
+    hi--;
+  }
+  else {
+    lo++;
+  }
+}
+
 // Two pointers (660c.cc)
 void solve() {
-  for (int lo = 0, hi = 0; lo < n; lo++) {
+  for (int lo = 0, hi = 0; lo < n; lo++/*NOTE: lo++ here*/) {
     // if (lo > hi) {
     //   hi = lo;
     //   cnt = 0;
@@ -297,6 +357,28 @@ void solve() {
   }
   cout << ans << "\n";
 }
+
+// Nearest Smaller Values at the leaf side
+void solve() {
+  int N; cin >> N;
+  vector<int> A(N);
+  for (int& a : A) {
+    cin >> a;
+  }
+  vector<int> stk;
+  for (int i = 0; i < N; i++) {
+    while (stk.size() && A[i] <= A[stk.back()]) {
+      stk.pop_back();
+    }
+    if (i > 0) {
+      cout << " ";
+    }
+    cout << (stk.empty() ? 0 : stk.back() + 1);
+    stk.push_back(i);
+  }
+  cout << "\n";
+}
+
 
 // Queue (137.cc)
 // 输入一个长度为 n 的整数序列，从中找出一段长度不超过 <= m 的连续子序列，
@@ -684,8 +766,6 @@ void dfs(vector<int>& ans) {
 }
 //
 //------------------------------------------------------------------------------
-
-
 // Dijkstra shortest path
 void dijkstra(int root) {
   vector<int> dist(n, INF);
