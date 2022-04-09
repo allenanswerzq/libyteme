@@ -256,6 +256,13 @@ void func() {
   }
 }
 
+// Tree Difference
+// c = lca(u, v)
+// p = parent[c]
+// point: f[u]++, f[v]++, f[c]--, f[p]--
+//
+// edge: f[u]+=x, f[v]+=x, f[c] -= 2*x
+
 // Binary search
 void binary_search() {
   // 0000000---1111111
@@ -620,7 +627,61 @@ void dfs(int u, int parent) {
   }
 }
 
-// topological sort
+// Undirected graph
+vector<int> vis(N);
+vector<int> pre(N);
+std::function<void(int, int)> dfs = [&](int u, int p) {
+  vis[u] = 1;
+  for (int v : g[u]) {
+    if (v == p) continue;
+    if (vis[v]) {
+      pre[v] = u;
+      vector<int> ans;
+      for (int j = u;;j = pre[j]) {
+        ans.push_back(j);
+        if (j == u && ans.size() > 1) {
+          break;
+        }
+      }
+      cout << ans.size() << "\n";
+      reverse(all(ans));
+      for (int i = 0; i < ans.size(); i++) {
+        cout << ans[i] + 1 << (i == ans.size() - 1 ? '\n' : ' ');
+      }
+      exit(0);
+    }
+    else {
+      pre[v] = u;
+      dfs(v, u);
+    }
+  }
+};
+for (int i = 0; i < N; i++) {
+  if (!vis[i]) {
+    pre[i] = -1;
+    dfs(i, -1);
+  }
+}
+
+
+// Visit edge instead node
+vector<int> vis(M);
+vector<int> ans;
+trace(eu, ev, g);
+std::function<void(int)> dfs = [&](int u) {
+  while (g[u].size()) {
+    int e = g[u].back();
+    g[u].pop_back();
+    if (vis[e]) continue;
+    trace(u, eu[e], ev[e], g[u], ans);
+    vis[e] = 1;
+    dfs(eu[e] ^ u ^ ev[e]);
+    ans.push_back(u);
+  }
+};
+
+
+// Directed graph topological sort
 void toposort_dfs() {
   // a --> b, b must start before a
   vector<int> ans;
@@ -814,3 +875,44 @@ void bellman_ford() {
     }
   }
 }
+
+// -----------------------------------------------------------------------------
+// weight DP
+// Complexity: O(nc)
+//
+// F[a] := maximum profit for weight >= a
+//
+// f[i][x] = max(f[i-1][x], f[i-1][x-w] + p)
+int knapsackW(vector<int> p, vector<int> w, int c) {
+    int n = w.size();
+    vector<int> F(c+1);
+    for (int i = 0; i < n; ++i)
+        for (int a = c; a >= w[i]; --a)
+            F[a] = max(F[a], F[a-w[i]] + p[i]);
+    return F[c];
+}
+
+// Profit DP
+// Complexity: O(n sum p)
+//
+// F[a] := minimum weight for profit a
+//
+// f[i][a] == min(f[i-1][a], f[i-1][a - p] + w)
+int knapsackP(vector<int> p, vector<int> w, int c) {
+    int n = p.size(), P = accumulate(all(p), 0);
+    vector<int> F(P+1, c+1); F[0] = 0;
+    for (int i = 0; i < n; ++i)
+        for (int a = P; a >= p[i]; --a)
+            F[a] = min(F[a], F[a-p[i]] + w[i]);
+    for (int a = P; a >= 0; --a)
+        if (F[a] <= c) return a;
+}
+
+// 1 2 3 4 5 6 7
+// The number of ways to get the sum `s` using the first `i` numbers.
+// f[i][s] = f[i - 1][s] + f[i - 1][s - ai]
+
+
+// the maxinum value if the last is `i`th for something
+// f[i] = max(f[j]) + wi
+
