@@ -5,13 +5,14 @@ class Bit {
  public:
   Bit(int n) : n_(n) { t_.resize(n_ + 1); }
 
+  // Add value to position x+1
   void add(int x, T d) {
     for (++x; x <= n_; x += lowbit(x)) {
       t_[x] += d;
     }
   }
 
-  // Query sum of interval [0...x].
+  // Query sum of interval [1...x+1]
   T query(int x) {
     T ans = 0;
     for (++x; x > 0; x -= lowbit(x)) {
@@ -20,8 +21,12 @@ class Bit {
     return ans;
   }
 
-  // Query sum of interval [l...r].
-  T query(int l, int r) { return query(r) - query(l - 1); }
+  // Query sum of interval [l...r)
+  T query(int l, int r) {
+    assert(0 <= l && l < n);
+    assert(0 <= r && r <= n);
+    return query(r - 1) - query(l - 1);
+  }
 
  private:
   int lowbit(int x) { return x & -x; }
@@ -66,31 +71,4 @@ class Bit {
   int lowbit(int x) { return x & -x; }
   int n_, m_;
   vector<vector<T>> t_;
-};
-
-// Compute the maxinum value in [0, ...x]
-template <class T>
-class Bit {
- public:
-  Bit(int n) : n_(n) { t_.resize(n_ + 1); }
-
-  void add(int x, T d) {
-    for (++x; x <= n_; x += lowbit(x)) {
-      t_[x] = max(t_[x], d);
-    }
-  }
-
-  // Query maxinum value of interval [0...x].
-  T query(int x) {
-    T ans = 0;
-    for (++x; x > 0; x -= lowbit(x)) {
-      ans = max(t_[x], ans);
-    }
-    return ans;
-  }
-
- private:
-  int lowbit(int x) { return x & -x; }
-  int n_;
-  vector<T> t_;
 };

@@ -109,20 +109,23 @@ vector<int> bucket_sort(vector<int>& A) {
 
 //
 // NOTE: modify a set or map ==> erase the old then insert the new.
-//
+// multiset<int> vs set<int>
 // st.erase(st.find(x))
+// st.insert(val)
+//
+// if st.empty(); assert(st.begin() == st.end())
 //
 // auto it = st.lower_bound(x);
 // if (it != st.end()) [st.begin(), it - 1] < x
 //                     [it ... it.end()] >= x
-// if (it == st.end()) all values < x
+// if (it == st.end())   all values < x
 // if (it == st.begin()) all values >= x
 //
 // auto it = st.upper_bound(x);
 // if (it != st.begin()) [st.begin() ... it - 1] <= x
 //                       [it .... it.end()] > x
-// if (it == st.end()) -> all values <= x or st is empty
-// if (it == st.begin()) -> all values > x or st is empty()
+// if (it == st.end())   all values <= x or st is empty
+// if (it == st.begin()) all values > x or st is empty()
 //
 void solve() {
   int N, M, K; cin >> N >> M >> K;
@@ -151,9 +154,56 @@ void solve() {
 // interval problems
 // 1. sort interval by first
 // 2. sort interval by second
-// 3. sort edge point (x, -1), (y, 1)
+// 3. sort edge point (start, 1), (end, -1)
 //
 // -----------------------------------------------------------------------------
+ListNode* reverse(ListNode* root, int k) {
+  ListNode *pre = nullptr;
+  auto p = root;
+  while (k-- && p) {
+    auto t = p->next;
+    p->next = pre;
+    pre = p;
+    p = t;
+  }
+  root->next = p; // connects with the rest chain
+  return pre;
+}
+
+ListNode* reverse(ListNode* root) {
+  if (!root) return nullptr;
+  if (!root->next) return root;
+  auto l = reverse(root->next);
+  // r l
+  // 1->2->3
+  // ------|
+  // 1  3->2
+  root->next->next = root;
+  root->next = nullptr;
+  return l;
+}
+
+ListNode* sortList(ListNode* head) {
+  if (!head) return nullptr;
+  if (!head->next) return head;
+  // 1 2 3 4
+  // 1 2 3 4 5 -> (n - 1) / 2
+  ListNode *fast, *slow;
+  fast = slow = head;
+  while (fast->next && fast->next->next) {
+    slow = slow->next;
+    fast = fast->next->next;
+    // fast can not be empty, so has to stop at (1...n)
+    // take (n - 1) / 2 steps
+  }
+  ListNode *last = slow->next;
+  slow->next = nullptr;
+  //cout << slow->val << endl;
+  ListNode *l1 = sortList(head);
+  ListNode *l2 = sortList(last);
+  return merge(l1, l2);
+}
+
 ListNode* merge_list(ListNode* l1, ListNode* l2) {
   if (!l1) return l2;
   if (!l2) return l1;
@@ -196,10 +246,11 @@ void traverse_list(ListNode* l1) {
 }
 
 void delete_node(ListNode* l1, int val) {
-  for (ListNode **p = &l1; *p; p = &(*p)->next) {
-    while ((*p)->val == val) {
+  for (ListNode **p = &l1; *p; ) {
+    while (*p && (*p)->val == val) {
       *p = (*p)->next;
     }
+    if (*p) p = &(*p)->next;
   }
 }
 
@@ -238,7 +289,7 @@ void func() {
   vector<int> A(N)
   vector<int> v(N);
   for (int i = 0; i < N; i++) {
-    // NOTE: the fisrt value equals to itself
+    // NOTE: the first value equals to itself
     v[i] = A[i] - (i > 0 ? A[i - 1] : 0);
   }
   // Add value x to interval A[l...r]
@@ -256,13 +307,6 @@ void func() {
   }
 }
 
-// Tree Difference
-// c = lca(u, v)
-// p = parent[c]
-// point: f[u]++, f[v]++, f[c]--, f[p]--
-//
-// edge: f[u]+=x, f[v]+=x, f[c] -= 2*x
-
 // Binary search
 void binary_search() {
   // 0000000---1111111
@@ -279,6 +323,8 @@ void binary_search() {
   }
 }
 
+// two sum
+sort(all(A));
 int lo = i;
 int hi = N;
 while (lo + 1 <= hi) {
@@ -314,52 +360,48 @@ void solve() {
 }
 
 // Discrete
-template <int N>
+template <bool ONE = false>
 struct Discreter {
-  vector<int> e;
-  vector<int> t;
+  unordered_map<int, int> raw_dis_;
+  vector<int> sorted_;
 
-  Discreter(vector<int>& v) {
-    e = v;
-    sort(all(e));
-    e.erase(unique(all(e)), e.end());
-    for (int i = 0; i < N; i++) {
-      int x = upper_bound(all(e), i) - e.begin();
-      t.push_back(x);
+  Discreter(const vector<int> &val) {
+    sorted_ = val;
+    sort(all(sorted_));
+    sorted_.erase(unique(all(sorted_)), sorted_.end());
+    for (int x : val) {
+      int p = lower_bound(all(sorted_), x) - sorted_.begin() + ONE;
+      raw_dis_[x] = p;
     }
   }
 
-  // Given a original value, returns the discreted value.
-  int get(int x) { return t[x]; }
+  // The maxinum value after discreting
+  int max() { return sorted_.size(); }
 
-  // Given a discreted value, return the original value.
-  int old(int x) { return e[x - 1]; }
+  // Given a raw value, returns the discreted value.
+  int get(int r) { return raw_dis_[r]; }
+
+  // Given a discreted value, returns the raw value.
+  int old(int d) { return sorted_[d - ONE]; }
 };
 
 // -----------------------------------------------------------------------------
 // Stack (133.cc)
 void solve() {
-  vector<ll> a(n);
-  for (int i = 0; i < n; i++) {
-    cin >> a[i];
+  vector<ll> A(N);
+  for (int i = 0; i < N; i++) {
+    cin >> A[i];
   }
-  a.push_back(0), n++;
-  trace(a, n);
+  A.push_back(0), N++;
   vector<int> stk;
   ll ans = 0;
-  for (int i = 0; i < n; i++) {
-    if (stk.empty() || a[i] >= a[stk.back()]) {
-      stk.push_back(i);
-      continue;
-    }
-
-    while (!stk.empty() && a[stk.back()] > a[i]) {
-      ll height = a[stk.back()];
+  for (int i = 0; i < N; i++) {
+    while (stk.size() && A[stk.back()] > A[i]) {
+      ll height = A[stk.back()];
       stk.pop_back();
       ll lo = stk.empty() ? -1 : stk.back();
       ans = max(ans, (i - lo - 1) * height);
     }
-
     stk.push_back(i);
   }
   cout << ans << "\n";
@@ -374,7 +416,7 @@ void solve() {
   }
   vector<int> stk;
   for (int i = 0; i < N; i++) {
-    while (stk.size() && A[i] <= A[stk.back()]) {
+    while (stk.size() && A[stk.back()] >= A[i]) {
       stk.pop_back();
     }
     if (i > 0) {
@@ -510,12 +552,13 @@ struct Bit {
   // Query sum of interval [1...x].
   T query(int x) {
     T ans = 0;
-    for (; x > 0; x -= lowbit(x)) {
+    for (++x; x > 0; x -= lowbit(x)) {
       ans += t[x];
     }
     return ans;
   }
 
+  // Query sum of interval [l...r].
   T query(int l, int r) { return query(r) - query(l - 1); }
 };
 
@@ -608,7 +651,66 @@ void bfs() {
   }
 }
 
-// dfs (any graph), shouldn't pass `parent`
+//
+struct TreeNode {
+  int val = 0;
+  TreeNode *left = nullptr;
+  TreeNode *right = nullptr;
+
+  TreeNode() {}
+  TreeNode(int x) : val(x) {}
+  TreeNode(int x, TreeNode *l, TreeNode *r)
+    : val(x), left(l), right(r) {}
+
+  static int NIL;
+
+  // [1,2,3,4,5,null,6,7,8,9,null]
+  // bfs level order
+  static TreeNode* create(const vector<int> & v) {
+    if (v.empty()) return nullptr;
+    vector<TreeNode*> qu;
+    auto root = new TreeNode(v[0]);
+    qu.push_back(root);
+    int k = 1;
+    for (int i = 0; i < qu.size(); i++) {
+      if (!qu[i]) continue;
+      // trace(i, qu[i], k);
+      if (k < v.size()) {
+        auto l = (v[k] == TreeNode::NIL ? nullptr : new TreeNode(v[k]));
+        qu[i]->left = l;
+        qu.push_back(l);
+        k++;
+      }
+      if (k < v.size()) {
+        auto r = (v[k] == TreeNode::NIL ? nullptr : new TreeNode(v[k]));
+        qu[i]->right = r;
+        qu.push_back(r);
+        k++;
+      }
+    }
+    return root;
+  }
+
+  vector<int> serialize() {
+    vector<int> ans;
+    vector<TreeNode*> qu;
+    qu.push_back(this);
+    for (int i = 0; i < qu.size(); i++) {
+      auto root = qu[i];
+      ans.push_back(root ? root->val : NIL);
+      if (!root) continue;
+      if (!root->left && !root->right) continue;
+      qu.push_back(root->left);
+      if (!root->right) continue;
+      qu.push_back(root->right);
+    }
+    return ans;
+  }
+};
+
+int TreeNode::NIL = -1;
+
+// dfs
 vector<int> vis(N);
 void dfs(int u) {
   vis[u] = true;
@@ -619,7 +721,7 @@ void dfs(int u) {
   }
 }
 
-// for a tree (without cycle)
+// for a tree
 void dfs(int u, int parent) {
   for (int v : g[u]) {
     if (v == parent) continue;
@@ -664,7 +766,7 @@ for (int i = 0; i < N; i++) {
 }
 
 
-// Visit edge instead node
+// Visit edges instead of nodes
 vector<int> vis(M);
 vector<int> ans;
 trace(eu, ev, g);
@@ -744,22 +846,18 @@ vector<int> deg(N);
 vector<vector<int>> paths;
 void dfs(vector<int>& ans) {
   // This order should be a array with size N that euqals some permutation,
-  for (int i = 0; i < N; i++) {
+  for (int u = 0; u < N; u++) {
     // On every position, try use all numbers
-    if (deg[i] == 0 && vis[i] == 0) {
-      for (int v : g[u]) {
-        deg[v]--;
-      }
-      ans.push_back(i);
-      vis[i] = 1;
+    if (deg[u] == 0 && vis[u] == 0) {
+      for (int v : g[u]) deg[v]--;
+      ans.push_back(u);
+      vis[u] = 1;
 
       dfs(ans);     // backtracking
 
       ans.pop_back();
-      vis[i] = 0;
-      for (int v : g[u]) {
-        deg[v]++;
-      }
+      vis[u] = 0;
+      for (int v : g[u]) deg[v]++;
     }
   }
   if (ans.size() == N) {
@@ -825,6 +923,93 @@ void dfs(vector<int>& ans) {
     }
   }
 }
+// -----------------------------------------------------------------------------
+// For directed graph
+// 1. back edge (cycle)
+// 2. cross edge
+// 3. forward edge
+//
+// For undirected graph
+// 1. only has forward edge
+//
+// Tree related (no cycle)
+// 1. simple dfs
+std::function<void(int)> dfs = [&](int u, int p) {
+  for (int v : g[u]) {
+    if (v == p) continue;
+    dfs(v);
+    f[u] += f[v] + 1;
+  }
+};
+// 2. tree dp
+// f[u][] = op(f[v][])
+//
+// 3. tree difference
+// c = lca(u, v)
+// p = parent[c]
+// point: f[u]++, f[v]++, f[c]--, f[p]--
+// edge: f[u]+=x, f[v]+=x, f[c] -= 2*x
+//
+// 4. change root
+std::function<void(int, ll)> dfs2 = [&](int u, ll p) {
+  vis[u] = 1;
+  ans[u] = p;
+  for (int v : g[u]) {
+    if (!vis[v]) {
+      dfs2(v, p - s[v] + (N - s[v]));
+    }
+  }
+};
+// 5. 2^k = 2 * 2^(k-1) | lca
+for (int k = 1; k < K; k++) {
+  for (int i = 0; i < N; i++) {
+    int p = f[i][k - 1];
+    if (p >= 0) {
+      f[i][k] = f[p][k - 1];
+    }
+  }
+}
+for (int i = 0; i < Q; i++) {
+  int x, k; cin >> x >> k;
+  x--;
+  for (int j = 0; j < K; j++) {
+    if (k >> j & 1) {
+      x = f[x][j];
+      if (x < 0) break;
+    }
+  }
+}
+// 6: lca f[u] + f[v] - 2*f[lca(u, v)]
+// 7: turn subtree into interval
+std::function<void(int, int)> dfs = [&](int u, int p) {
+  enter[u] = cnt++;
+  for (int v : g[u]) {
+    if (v == p) continue;
+    dfs(v, u);
+  }
+  leave[u] = cnt++;
+};
+dfs(0, -1);
+Bit<ll> bit(cnt);
+for (int i = 0; i < N; i++) {
+  bit.add(enter[i], A[i]);
+}
+trace(cnt, enter, leave);
+for (int i = 0; i < Q; i++) {
+  int op; cin >> op;
+  if (op == 1) {
+    int s; ll x; cin >> s >> x;
+    s--;
+    s = enter[s];
+    bit.add(s, x - bit.query(s, s + 1));
+  }
+  else {
+    int s; cin >> s;
+    s--;
+    cout << bit.query(enter[s], leave[s] + 1) << "\n";
+  }
+}
+
 //
 //------------------------------------------------------------------------------
 // Dijkstra shortest path
@@ -884,12 +1069,12 @@ void bellman_ford() {
 //
 // f[i][x] = max(f[i-1][x], f[i-1][x-w] + p)
 int knapsackW(vector<int> p, vector<int> w, int c) {
-    int n = w.size();
-    vector<int> F(c+1);
-    for (int i = 0; i < n; ++i)
-        for (int a = c; a >= w[i]; --a)
-            F[a] = max(F[a], F[a-w[i]] + p[i]);
-    return F[c];
+  int n = w.size();
+  vector<int> F(c + 1);
+  for (int i = 0; i < n; ++i)
+    for (int a = c; a >= w[i]; --a)
+      F[a] = max(F[a], F[a-w[i]] + p[i]);
+  return F[c];
 }
 
 // Profit DP
@@ -899,20 +1084,38 @@ int knapsackW(vector<int> p, vector<int> w, int c) {
 //
 // f[i][a] == min(f[i-1][a], f[i-1][a - p] + w)
 int knapsackP(vector<int> p, vector<int> w, int c) {
-    int n = p.size(), P = accumulate(all(p), 0);
-    vector<int> F(P+1, c+1); F[0] = 0;
-    for (int i = 0; i < n; ++i)
-        for (int a = P; a >= p[i]; --a)
-            F[a] = min(F[a], F[a-p[i]] + w[i]);
-    for (int a = P; a >= 0; --a)
-        if (F[a] <= c) return a;
+  int n = p.size(), P = accumulate(all(p), 0);
+  vector<int> F(P+1, c+1);
+  F[0] = 0;
+  for (int i = 0; i < n; ++i)
+    for (int a = P; a >= p[i]; --a)
+      F[a] = min(F[a], F[a-p[i]] + w[i]);
+  for (int a = P; a >= 0; --a)
+    if (F[a] <= c) return a;
 }
 
 // 1 2 3 4 5 6 7
 // The number of ways to get the sum `s` using the first `i` numbers.
 // f[i][s] = f[i - 1][s] + f[i - 1][s - ai]
 
-
 // the maxinum value if the last is `i`th for something
-// f[i] = max(f[j]) + wi
+// f[i] = max(f[j]) + wi (j < i)
+
+// interval dp
+for (int len = 2; len <= N; len++) {
+  for (int l = 1; l + len - 1 <= N; l++) {
+    int r = l + len - 1;
+    f[l][r] = INF;
+    for (int k = l; k < r; k++) {
+      amin(f[l][r], f[l][k] + f[k + 1][r] + s[r] - s[l - 1]);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// 1. z function
+// An element Z[i] of Z array stores length of the longest substring
+// starting from str[i] which is also a prefix of str[0..n-1].
+
+// 2. string hash
 
