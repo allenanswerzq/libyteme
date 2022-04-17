@@ -444,7 +444,7 @@ void solve() {
 
   deque<int> qu;
   qu.push_back(0);
-  ll ans = INT_MIN;
+  ll ans = -1e18;
   for (int i = 1; i <= N; i++) {
     // front [ <-, <-, <-,
     //                     i
@@ -500,7 +500,7 @@ struct Trie {
       }
       u = node[u][v];
     }
-    *ret = leaf[u];
+    if (ret) *ret = leaf[u];
     return leaf[u] > 0;
   }
 };
@@ -510,7 +510,7 @@ struct Dsu {
   int n;
   vector<int> e;
 
-  Dsu(int n) : n(n_) { e.resize(n, -1); }
+  Dsu(int n) : n(n) { e.resize(n, -1); }
 
   int size(int x) { return -e[find(x)]; }
 
@@ -533,23 +533,20 @@ struct Dsu {
   }
 };
 
-// Bit one-indexed
+// Bit zero-indexed
 template <class T>
-struct Bit {
-  vector<T> t;
-  int n;
-
-  int lowbit(x) { return x & -x; }
-
+class Bit {
+ public:
   Bit(int n_) : n(n_) { t.resize(n + 1); }
 
-  void add(int x, int d) {
-    for (; x <= n; x += lowbit(x)) {
+  // add zero index at x
+  void add(int x, T d) {
+    for (++x; x <= n; x += lowbit(x)) {
       t[x] += d;
     }
   }
 
-  // Query sum of interval [1...x].
+  // query zero index: [0...x]
   T query(int x) {
     T ans = 0;
     for (++x; x > 0; x -= lowbit(x)) {
@@ -558,8 +555,18 @@ struct Bit {
     return ans;
   }
 
-  // Query sum of interval [l...r].
-  T query(int l, int r) { return query(r) - query(l - 1); }
+  // zero index: [l...r)
+  //  one index: [l+1,...r+1)
+  T query(int l, int r) {
+    assert(0 <= l && l < n);
+    assert(0 <= r && r <= n);
+    return query(r - 1) - query(l - 1);
+  }
+
+ private:
+  int lowbit(int x) { return x & -x; }
+  int n;
+  vector<T> t;
 };
 
 // zero-indexed
@@ -1062,6 +1069,11 @@ void bellman_ford() {
 }
 
 // -----------------------------------------------------------------------------
+// solve dp problems:
+// 1. state transfer function
+// 2. initial value, use -INF for max something, use INF for min
+// 3. compute, note order, edge case, index conversion etc..
+//
 // weight DP
 // Complexity: O(nc)
 //
@@ -1100,6 +1112,13 @@ int knapsackP(vector<int> p, vector<int> w, int c) {
 
 // the maxinum value if the last is `i`th for something
 // f[i] = max(f[j]) + wi (j < i)
+
+// use a extra mx value to optimize complexity
+// f[i][k] = max(f[j-1][k-1] - a[j] + a[i], f[i-1][k]) j < i
+
+// f[i][0] = max f[j][1] - a[j]  (j < i)
+// f[i][1] = max f[j][0] + a[j]
+//
 
 // interval dp
 for (int len = 2; len <= N; len++) {

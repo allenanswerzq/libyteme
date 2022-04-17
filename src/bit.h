@@ -3,25 +3,26 @@
 template <class T>
 class Bit {
  public:
-  Bit(int n) : n_(n) { t_.resize(n_ + 1); }
+  Bit(int n_) : n(n_) { t.resize(n + 1); }
 
-  // Add value to position x+1
+  // add zero index at x
   void add(int x, T d) {
-    for (++x; x <= n_; x += lowbit(x)) {
-      t_[x] += d;
+    for (++x; x <= n; x += lowbit(x)) {
+      t[x] += d;
     }
   }
 
-  // Query sum of interval [1...x+1]
+  // query zero index: [0...x]
   T query(int x) {
     T ans = 0;
     for (++x; x > 0; x -= lowbit(x)) {
-      ans += t_[x];
+      ans += t[x];
     }
     return ans;
   }
 
-  // Query sum of interval [l...r)
+  // zero index: [l...r)
+  //  one index: [l+1,...r+1)
   T query(int l, int r) {
     assert(0 <= l && l < n);
     assert(0 <= r && r <= n);
@@ -30,8 +31,8 @@ class Bit {
 
  private:
   int lowbit(int x) { return x & -x; }
-  int n_;
-  vector<T> t_;
+  int n;
+  vector<T> t;
 };
 
 
