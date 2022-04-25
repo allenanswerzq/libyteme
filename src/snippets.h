@@ -127,6 +127,8 @@ vector<int> bucket_sort(vector<int>& A) {
 // if (it == st.end())   all values <= x or st is empty
 // if (it == st.begin()) all values > x or st is empty()
 //
+// lo
+// [x.x.x.x.x.]hi
 void solve() {
   int N, M, K; cin >> N >> M >> K;
   multiset<int> st;
@@ -287,7 +289,7 @@ void prefix_sum2() {
 void func() {
   // Zero indexed
   vector<int> A(N)
-  vector<int> v(N);
+  vector<int> v(N + 1);
   for (int i = 0; i < N; i++) {
     // NOTE: the first value equals to itself
     v[i] = A[i] - (i > 0 ? A[i - 1] : 0);
@@ -297,7 +299,7 @@ void func() {
   v[l] += x;
   v[r + 1] -= x;
   // Compute the final array after applying add ops
-  for (int i = 0; i + 1 < N; i++) {
+  for (int i = 0; i < N; i++) {
     v[i + 1] += v[i];
   }
   // Compute the prefix sum
@@ -1096,7 +1098,7 @@ int knapsackW(vector<int> p, vector<int> w, int c) {
 //
 // f[i][a] == min(f[i-1][a], f[i-1][a - p] + w)
 int knapsackP(vector<int> p, vector<int> w, int c) {
-  int n = p.size(), P = accumulate(all(p), 0);
+  int n = p.size(), P = accumulate(all(p), 0)
   vector<int> F(P+1, c+1);
   F[0] = 0;
   for (int i = 0; i < n; ++i)
