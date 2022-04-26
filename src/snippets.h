@@ -345,10 +345,11 @@ while (lo + 1 <= hi) {
 // Two pointers (660c.cc)
 void solve() {
   for (int lo = 0, hi = 0; lo < n; lo++/*NOTE: lo++ here*/) {
-    // if (lo > hi) {
-    //   hi = lo;
-    //   cnt = 0;
-    // }
+    if (lo > hi) {
+      // in case hi does not move forward
+      hi = lo;
+      cnt = 0;
+    }
     while (hi < n && check(hi)) {
       hi++;
     }
@@ -492,18 +493,16 @@ struct Trie {
     leaf[u]++;
   }
 
-  bool find(const string& s, int* ret = nullptr) {
+  int find(const string& s) {
     int u = 0;
     for (auto ch : s) {
       int v = get(ch);
       if (!node[u][v]) {
-        if (ret) *ret = 0;
-        return false;
+        return 0;
       }
       u = node[u][v];
     }
-    if (ret) *ret = leaf[u];
-    return leaf[u] > 0;
+    return leaf[u];
   }
 };
 
