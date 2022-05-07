@@ -26,9 +26,9 @@ void merge_sort(vector<int>& v, vector<int>& aux, int lo, int hi) {
   // [lo ... md md+1...hi]
   for (int i = lo, j = md + 1, k = lo; k <= hi; k++) {
     if (j > hi || (i <= md && v[i] <= v[j])) {
-      aux[k++] = v[i++];
+      aux[k] = v[i++];
     } else {
-      aux[k++] = v[j++];
+      aux[k] = v[j++];
     }
   }
   for (int k = lo; k <= hi; k++) {
@@ -173,8 +173,7 @@ ListNode* reverse(ListNode* root, int k) {
 }
 
 ListNode* reverse(ListNode* root) {
-  if (!root) return nullptr;
-  if (!root->next) return root;
+  if (!root || !root->next) return root;
   auto l = reverse(root->next);
   // r l
   // 1->2->3
@@ -186,8 +185,7 @@ ListNode* reverse(ListNode* root) {
 }
 
 ListNode* sortList(ListNode* head) {
-  if (!head) return nullptr;
-  if (!head->next) return head;
+  if (!head || !head->next) return head;
   // 1 2 3 4
   // 1 2 3 4 5 -> (n - 1) / 2
   ListNode *fast, *slow;
@@ -260,12 +258,19 @@ void insert_after(ListNode* l1, int val) {
   l1->next = new ListNode(val, l1->next);
 }
 
+// **p denotes the previous next pointer points to current node, change *p will
+// change the previous next pointer, see leet24/leet109 in case you forget
+auto **p = head;
+p = &(*p)->next
+// a --> b --> c --> d
+//   p
+
 // -----------------------------------------------------------------------------
 // Prefix sum
-int a[N];
+int A[N];
 void prefix_sum() {
-  for (int i = 1; i <= n; i++) {
-    ps[i] = ps[i - 1] + a[i];
+  for (int i = 0; i < N; i++) {
+    ps[i + 1] = ps[i] + A[i];
   }
   // length l to r
   sum[l... r] = ps[r] - ps[l - 1];
@@ -431,6 +436,33 @@ void solve() {
   cout << "\n";
 }
 
+vector<int> right_most(vector<int> & v) {
+  // right most index that greater or equal than current
+  vector<int> ans(v.size());
+  set<array<int, 2>> st;
+  for (int i = (int) v.size() - 1; i >= 0; i--) {
+    if (st.empty() || v[i] > (*st.rbegin())[0]) {
+      st.insert({v[i], i});
+    }
+    auto it = st.lower_bound({v[i], -1});
+    ans[i] = (*it)[1];
+  }
+  return ans;
+}
+
+vector<int> left_most(vector<int> & v) {
+  // left most index that greater or equal than current
+  vector<int> ans(v.size());
+  set<array<int, 2>> st;
+  for (int i = 0; i < (int) v.size(); i++) {
+    if (st.empty() || v[i] > (*st.rbegin())[0]) {
+      st.insert({v[i], i});
+    }
+    auto it = st.lower_bound({v[i], -1});
+    ans[i] = (*it)[1];
+  }
+  return ans;
+}
 
 // Queue (137.cc)
 // 输入一个长度为 n 的整数序列，从中找出一段长度不超过 <= m 的连续子序列，
@@ -444,9 +476,8 @@ void solve() {
     cin >> a[i];
     ps[i] = ps[i - 1] + a[i];
   }
-
   deque<int> qu;
-  qu.push_back(0);
+  qu.push_back(0); // NOTE: have to push the first element into the queue
   ll ans = -1e18;
   for (int i = 1; i <= N; i++) {
     // front [ <-, <-, <-,
@@ -659,6 +690,18 @@ void bfs() {
   }
 }
 
+void bfs() {
+  vector<int> qu;
+  qu.push_back(0);
+  int m = qu.size();
+  for (int i = 0; i < qu.size(); i++) {
+    if (i == m - 1) {
+      // reached the last element of this level
+      m = qu.size();
+    }
+  }
+}
+
 //
 struct TreeNode {
   int val = 0;
@@ -667,8 +710,7 @@ struct TreeNode {
 
   TreeNode() {}
   TreeNode(int x) : val(x) {}
-  TreeNode(int x, TreeNode *l, TreeNode *r)
-    : val(x), left(l), right(r) {}
+  TreeNode(int x, TreeNode *l, TreeNode *r) : val(x), left(l), right(r) {}
 
   static int NIL;
 
@@ -707,10 +749,8 @@ struct TreeNode {
       auto root = qu[i];
       ans.push_back(root ? root->val : NIL);
       if (!root) continue;
-      if (!root->left && !root->right) continue;
-      qu.push_back(root->left);
-      if (!root->right) continue;
-      qu.push_back(root->right);
+      if (root->left) qu.push_back(root->left);
+      if (root->right) qu.push_back(root->right);
     }
     return ans;
   }
@@ -718,14 +758,37 @@ struct TreeNode {
 
 int TreeNode::NIL = -1;
 
+// dfs return values
+class Solution {
+public:
+  int ans = -1e9;
+
+  int dfs(TreeNode* root) {
+    if (!root) return -1e9;
+    int l = dfs(root->left);
+    int r = dfs(root->right);
+    int v = root->val;
+    ans = max({ans, l, r, v, l + v, r + v, l + r + v});
+    return max({l, r, 0}) + v;
+  }
+
+  int maxPathSum(TreeNode* root) {
+    if (!root) return 0;
+    dfs(root);
+    return ans;
+  }
+};
+
 // dfs
 vector<int> vis(N);
 void dfs(int u) {
   vis[u] = true;
+  f[u] = w[u];
   for (auto v : g[u]) {
     if (!vis[v]) {
       dfs(v);
     }
+    f[u] = max(f[u], f[v] + w[u]);
   }
 }
 
@@ -1081,6 +1144,7 @@ void bellman_ford() {
 // F[a] := maximum profit for weight >= a
 //
 // f[i][x] = max(f[i-1][x], f[i-1][x-w] + p)
+// NOTE: go backward to decrese f from 2d vector to 1d
 int knapsackW(vector<int> p, vector<int> w, int c) {
   int n = w.size();
   vector<int> F(c + 1);
@@ -1120,6 +1184,10 @@ int knapsackP(vector<int> p, vector<int> w, int c) {
 // f[i][0] = max f[j][1] - a[j]  (j < i)
 // f[i][1] = max f[j][0] + a[j]
 //
+
+// NOTE: go backward to decrese f from 2d vector to 1d
+// f[i][j] = f[i-1][j] + f[i-1][j-1] (s[i] == s[j])
+
 
 // interval dp
 for (int len = 2; len <= N; len++) {
